@@ -74,7 +74,7 @@ public class Strategy implements IStrategy {
 
     @Override
     public boolean isActivated() {
-        return rules.size() == rulesSubscribed.get();
+        return !rules.isEmpty() && rules.size() == rulesSubscribed.get();
     }
 
     @Override
