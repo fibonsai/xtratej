@@ -2,7 +2,7 @@
   "strategies": {
     "enter": {
       "symbol": "BTC/USD",
-      "type": "enter",
+      "type": "ENTER",
       "sources": {
         "flux1": {
           "type": "SIMULATED",
@@ -76,7 +76,7 @@
     },
     "exit": {
       "symbol": "BTC/USD",
-      "type": "enter",
+      "type": "EXIT",
       "sources": {
         "flux4": {
           "type": "SIMULATED",
