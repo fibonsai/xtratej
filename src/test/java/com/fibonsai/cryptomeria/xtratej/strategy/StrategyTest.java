@@ -177,7 +177,7 @@ public class StrategyTest {
         StrategyManager strategyManager = new StrategyManager();
 
         ObjectMapper mapper = new ObjectMapper();
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies_v2.json")) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies.json")) {
             JsonNode jsonNode = mapper.readValue(is, JsonNode.class);
             strategies = Loader.fromJson(jsonNode);
         }
