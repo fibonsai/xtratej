@@ -16,7 +16,9 @@ package com.fibonsai.cryptomeria.xtratej.strategy;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
+import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +45,10 @@ public interface IStrategy {
     }
 
     IStrategy addSource(Subscriber source);
+
+    IStrategy addSource(SourceType sourceType, String name, String publisher);
+
+    IStrategy addSource(SourceType sourceType, String name, String published, JsonNode properties);
 
     IStrategy setAggregatorRule(RuleStream aggregator);
 

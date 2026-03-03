@@ -18,9 +18,13 @@ import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.FalseRule;
+import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
+import com.fibonsai.cryptomeria.xtratej.sources.WithProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +35,9 @@ import java.util.stream.Collectors;
 public class Strategy implements IStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(Strategy.class);
+
+    public static final JsonNode EMPTY_PROPERTY = JsonNodeFactory.instance.objectNode();
+
     private final String name;
     private final String symbol;
     private final StrategyType strategyType;
@@ -75,6 +82,23 @@ public class Strategy implements IStrategy {
     public IStrategy addSource(Subscriber source) {
         if (!isActivated()) {
             sources.put(source.name(), source);
+        }
+        return this;
+    }
+
+    @Override
+    public IStrategy addSource(SourceType sourceType, String name, String publisher) {
+        return addSource(sourceType, name, publisher, EMPTY_PROPERTY);
+    }
+
+    @Override
+    public IStrategy addSource(SourceType sourceType, String name, String publisher, JsonNode properties) {
+        if (!isActivated()) {
+            Subscriber subscriber = sourceType.builder().setName(name).setPublisher(publisher).build();
+            if (subscriber instanceof WithProperties subscribeWithProperties) {
+                subscribeWithProperties.setProperties(properties);
+            }
+            addSource(subscriber);
         }
         return this;
     }
