@@ -88,7 +88,7 @@ public class Loader {
                     for (var sourceEntry: sources) {
                         String sourceName = sourceEntry.getKey();
                         JsonNode sourceJson = sourceEntry.getValue();
-                        JsonNode sourceParams = NODE_FACTORY.nullNode();
+                        JsonNode sourceParams = NODE_FACTORY.objectNode();
                         SourceType sourceType = SourceType.UNDEF;
                         String publisher = UNDEF;
                         if (sourceJson.hasNonNull(TYPE.key()) && sourceJson.get(TYPE.key()).isString()) {
