@@ -35,8 +35,8 @@ public class InSlopeRule extends RuleStream {
     private double maxSlope = Double.NaN;
 
     @Override
-    public RuleStream setProperties(JsonNode jsonNode) {
-        for (var e: jsonNode.properties()) {
+    public RuleStream setParams(JsonNode params) {
+        for (var e: params.properties()) {
             if ("minSlope".equals(e.getKey()) && e.getValue().isDouble()) minSlope = e.getValue().asDouble();
             if ("maxSlope".equals(e.getKey()) && e.getValue().isDouble()) maxSlope = e.getValue().asDouble();
         }

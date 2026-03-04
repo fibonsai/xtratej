@@ -33,8 +33,8 @@ public class CrossedRule extends RuleStream {
     private String sourceId = "";
 
     @Override
-    public RuleStream setProperties(JsonNode jsonNode) {
-        for (var e : jsonNode.properties()) {
+    public RuleStream setParams(JsonNode params) {
+        for (var e : params.properties()) {
             if ("threshold".equals(e.getKey())) {
                 final JsonNode value = e.getValue();
                 threshold = value.isDouble() ? value.asDouble() : (value.isInt() ? value.asInt() : Double.NaN);

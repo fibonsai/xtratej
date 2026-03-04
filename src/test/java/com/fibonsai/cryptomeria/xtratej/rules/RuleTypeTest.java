@@ -144,16 +144,15 @@ class RuleTypeTest {
     }
 
     @Test
-    void testBuilderWithPropertiesAndResults() {
-        ObjectNode properties = JsonNodeFactory.instance.objectNode();
-        properties.put("testProp", "testValue");
+    void testBuilderWithParamsAndResults() {
+        ObjectNode params = JsonNodeFactory.instance.objectNode();
+        params.put("testProp", "testValue");
 
         RuleStream rule = RuleType.And.build()
-                .setProperties(properties)
+                .setParams(params)
                 .setDescription("test-props");
 
         assertNotNull(rule);
         assertEquals("test-props", rule.getDescription());
-        // verifying properties might require reflection or a getter if available, but assuming constructor passed them correctly
     }
 }

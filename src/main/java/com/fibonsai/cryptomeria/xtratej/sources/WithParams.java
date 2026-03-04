@@ -16,6 +16,6 @@ package com.fibonsai.cryptomeria.xtratej.sources;
 
 import tools.jackson.databind.JsonNode;
 
-public interface WithProperties {
-    Subscriber setProperties(JsonNode properties);
+public interface WithParams {
+    Subscriber setParams(JsonNode params);
 }

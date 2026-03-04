@@ -15,21 +15,21 @@
 package com.fibonsai.cryptomeria.xtratej.sources.impl;
 
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.sources.WithProperties;
+import com.fibonsai.cryptomeria.xtratej.sources.WithParams;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 
-public class NatsSubscriber extends Subscriber implements WithProperties {
+public class NatsSubscriber extends Subscriber implements WithParams {
 
-    private JsonNode properties = JsonNodeFactory.instance.objectNode();
+    private JsonNode params = JsonNodeFactory.instance.objectNode();
 
     public NatsSubscriber(String name, String publisher) {
         super(name, publisher);
     }
 
     @Override
-    public Subscriber setProperties(JsonNode properties) {
-        this.properties = properties;
+    public Subscriber setParams(JsonNode params) {
+        this.params = params;
         return this;
     }
 
@@ -37,9 +37,9 @@ public class NatsSubscriber extends Subscriber implements WithProperties {
     public boolean connect() {
         // WIP. Ref: https://github.com/nats-io/nats.java
 
-        JsonNode natsProperties = JsonNodeFactory.instance.objectNode();
-        if (properties.hasNonNull("nats")) {
-            natsProperties = properties.get("nats");
+        JsonNode natsParams = JsonNodeFactory.instance.objectNode();
+        if (params.hasNonNull("nats")) {
+            natsParams = params.get("nats");
         }
 
         /* Add dependency:

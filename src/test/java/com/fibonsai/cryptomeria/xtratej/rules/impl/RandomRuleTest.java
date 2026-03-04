@@ -35,9 +35,6 @@ class RandomRuleTest {
     private AutoCloseable closeable;
 
     @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    @Mock
     private ITemporalData mockTimeSeries;
 
     private RandomRule randomRule;

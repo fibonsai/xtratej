@@ -35,8 +35,8 @@ public class TimeRule extends RuleStream {
     private boolean invert = false;
 
     @Override
-    public RuleStream setProperties(JsonNode jsonNode) {
-        for (var e: jsonNode.properties()) {
+    public RuleStream setParams(JsonNode params) {
+        for (var e: params.properties()) {
             if ("begin".equals(e.getKey()) && e.getValue().isString()) {
                 begin = e.getValue().asString();
             }

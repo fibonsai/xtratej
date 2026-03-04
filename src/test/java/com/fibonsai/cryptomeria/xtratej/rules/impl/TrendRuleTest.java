@@ -24,7 +24,6 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
@@ -35,15 +34,12 @@ class TrendRuleTest {
 
     private AutoCloseable closeable;
 
-    @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
     }
 
     @AfterEach
@@ -64,17 +60,17 @@ class TrendRuleTest {
     }
 
     @Test
-    void processProperties_shouldSetSourceIdAndIsRising() {
-        properties.put("sourceId", "s2");
-        properties.put("isRising", true);
-        TrendRule rule = RuleType.Trend.build().setProperties(properties) instanceof TrendRule r ? r : null;
+    void processParams_shouldSetSourceIdAndIsRising() {
+        params.put("sourceId", "s2");
+        params.put("isRising", true);
+        TrendRule rule = RuleType.Trend.build().setParams(params) instanceof TrendRule r ? r : null;
         assertNotNull(rule);
     }
 
     @Test
     void predicate_isRisingTrue_withRisingTrend_shouldReturnTrue() {
-        properties.put("isRising", true);
-        TrendRule rule = switch (RuleType.Trend.build().setProperties(properties)) {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -90,8 +86,8 @@ class TrendRuleTest {
 
     @Test
     void predicate_isRisingTrue_withFallingTrend_shouldReturnFalse() {
-        properties.put("isRising", true);
-        TrendRule rule = switch (RuleType.Trend.build().setProperties(properties)) {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -107,8 +103,8 @@ class TrendRuleTest {
 
     @Test
     void predicate_isRisingFalse_withFallingTrend_shouldReturnTrue() {
-        properties.put("isRising", false);
-        TrendRule rule = switch (RuleType.Trend.build().setProperties(properties)) {
+        params.put("isRising", false);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -124,10 +120,10 @@ class TrendRuleTest {
 
     @Test
     void predicate_compareWithSource_shouldReturnCorrectTrend() {
-        properties.put("sourceId", "s2");
-        properties.put("isRising", true); // s1 slope > s2 slope
-        properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
-        TrendRule rule = switch (RuleType.Trend.build().setProperties(properties)) {
+        params.put("sourceId", "s2");
+        params.put("isRising", true); // s1 slope > s2 slope
+        params.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -144,7 +140,7 @@ class TrendRuleTest {
     
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        TrendRule rule = switch (RuleType.Trend.build().setProperties(properties)) {
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };

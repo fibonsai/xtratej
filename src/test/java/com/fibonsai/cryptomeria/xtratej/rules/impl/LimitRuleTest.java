@@ -24,7 +24,6 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
@@ -35,15 +34,12 @@ class LimitRuleTest {
 
     private AutoCloseable closeable;
 
-    @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
     }
 
     @AfterEach
@@ -65,9 +61,9 @@ class LimitRuleTest {
 
     @Test
     void predicate_withinMinMax_shouldReturnTrue() {
-        properties.put("min", 10.0);
-        properties.put("max", 20.0);
-        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+        params.put("min", 10.0);
+        params.put("max", 20.0);
+        LimitRule rule = switch (RuleType.Limit.build().setParams(params)) {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -83,9 +79,9 @@ class LimitRuleTest {
 
     @Test
     void predicate_belowMin_shouldReturnFalse() {
-        properties.put("min", 10.0);
-        properties.put("max", 20.0);
-        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+        params.put("min", 10.0);
+        params.put("max", 20.0);
+        LimitRule rule = switch (RuleType.Limit.build().setParams(params)) {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -101,10 +97,10 @@ class LimitRuleTest {
 
     @Test
     void predicate_withinSourceBounds_shouldReturnTrue() {
-        properties.put("lowerSourceId", "lower");
-        properties.put("upperSourceId", "top");
-        properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
-        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+        params.put("lowerSourceId", "lower");
+        params.put("upperSourceId", "top");
+        params.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
+        LimitRule rule = switch (RuleType.Limit.build().setParams(params)) {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -122,10 +118,10 @@ class LimitRuleTest {
 
     @Test
     void predicate_aboveTopSource_shouldReturnFalse() {
-        properties.put("lowerSourceId", "lower");
-        properties.put("upperSourceId", "top");
-        properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
-        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+        params.put("lowerSourceId", "lower");
+        params.put("upperSourceId", "top");
+        params.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
+        LimitRule rule = switch (RuleType.Limit.build().setParams(params)) {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -143,7 +139,7 @@ class LimitRuleTest {
     
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+        LimitRule rule = switch (RuleType.Limit.build().setParams(params)) {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };

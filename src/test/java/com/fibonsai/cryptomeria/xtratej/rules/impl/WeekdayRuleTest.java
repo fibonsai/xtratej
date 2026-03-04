@@ -37,17 +37,14 @@ class WeekdayRuleTest {
     private AutoCloseable closeable;
 
     @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    @Mock
     private ITemporalData mockTimeSeries;
 
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
         when(mockTimeSeries.timestamp()).thenReturn(123L);
     }
 
@@ -63,8 +60,8 @@ class WeekdayRuleTest {
     @Test
     void predicate_todayIsWithekday_shouldReturnTrue() {
         String today = LocalDateTime.now().getDayOfWeek().name();
-        properties.set("weekdays", JsonNodeFactory.instance.arrayNode().add(today.toLowerCase()));
-        WeekdayRule rule = switch (RuleType.Weekday.build().setProperties(properties)) {
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add(today.toLowerCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -79,8 +76,8 @@ class WeekdayRuleTest {
     @Test
     void predicate_todayIsNotWeekday_shouldReturnFalse() {
         String tomorrow = LocalDateTime.now().plusDays(1).getDayOfWeek().name();
-        properties.set("weekdays", JsonNodeFactory.instance.arrayNode().add(tomorrow.toLowerCase()));
-        WeekdayRule rule = switch (RuleType.Weekday.build().setProperties(properties)) {
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add(tomorrow.toLowerCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -94,8 +91,8 @@ class WeekdayRuleTest {
 
     @Test
     void predicate_emptyWeekdayList_shouldReturnTrue() {
-        properties.set("weekdays", JsonNodeFactory.instance.arrayNode());
-        WeekdayRule rule = switch (RuleType.Weekday.build().setProperties(properties)) {
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode());
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -109,7 +106,7 @@ class WeekdayRuleTest {
     
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        WeekdayRule rule = switch (RuleType.Weekday.build().setProperties(properties)) {
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };

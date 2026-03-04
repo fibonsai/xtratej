@@ -33,8 +33,8 @@ public class WeekdayRule extends RuleStream {
     private final List<String> weekdays = new ArrayList<>();
 
     @Override
-    public RuleStream setProperties(JsonNode jsonNode) {
-        for (var e: jsonNode.properties()) {
+    public RuleStream setParams(JsonNode params) {
+        for (var e: params.properties()) {
             if ("weekdays".equals(e.getKey()) && e.getValue().isArray()) {
                 for (var element: e.getValue()) {
                     if (element.isString()) {

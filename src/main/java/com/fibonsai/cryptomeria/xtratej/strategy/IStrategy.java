@@ -48,7 +48,7 @@ public interface IStrategy {
 
     IStrategy addSource(SourceType sourceType, String name, String publisher);
 
-    IStrategy addSource(SourceType sourceType, String name, String published, JsonNode properties);
+    IStrategy addSource(SourceType sourceType, String name, String published, JsonNode params);
 
     IStrategy setAggregatorRule(RuleStream aggregator);
 

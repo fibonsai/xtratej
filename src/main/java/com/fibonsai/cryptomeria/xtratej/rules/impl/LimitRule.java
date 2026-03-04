@@ -36,8 +36,8 @@ public class LimitRule extends RuleStream {
     private String lowerSourceId = "";
 
     @Override
-    public RuleStream setProperties(JsonNode jsonNode) {
-        for (var e: jsonNode.properties()) {
+    public RuleStream setParams(JsonNode params) {
+        for (var e: params.properties()) {
             if ("min".equals(e.getKey()) && e.getValue().isDouble()) min = e.getValue().asDouble();
             if ("max".equals(e.getKey()) && e.getValue().isDouble()) max = e.getValue().asDouble();
             if ("upperSourceId".equals(e.getKey()) && e.getValue().isString()) upperSourceId = e.getValue().asString();
