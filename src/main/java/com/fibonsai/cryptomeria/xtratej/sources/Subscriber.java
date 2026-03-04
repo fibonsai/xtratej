@@ -41,4 +41,5 @@ public abstract class Subscriber {
 
     public abstract boolean connect();
     public abstract boolean disconnect();
+    public abstract boolean isConnected();
 }

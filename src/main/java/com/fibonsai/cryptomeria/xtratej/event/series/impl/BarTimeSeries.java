@@ -16,7 +16,13 @@ package com.fibonsai.cryptomeria.xtratej.event.series.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.serde.BarTimeSeriesDeserializer;
+import com.fibonsai.cryptomeria.xtratej.event.series.serde.BarTimeSeriesSerializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
+@JsonSerialize(using = BarTimeSeriesSerializer.class)
+@JsonDeserialize(using = BarTimeSeriesDeserializer.class)
 public class BarTimeSeries extends TimeSeries {
 
     private double[] opens;

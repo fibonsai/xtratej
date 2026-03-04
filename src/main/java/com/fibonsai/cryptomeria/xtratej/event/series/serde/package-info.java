@@ -12,28 +12,4 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.cryptomeria.xtratej.sources.impl;
-
-import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
-
-public class SimulatedSubscriber extends Subscriber {
-
-    public SimulatedSubscriber(String name, String publisher) {
-        super(name, publisher);
-    }
-
-    @Override
-    public boolean connect() {
-        return true;
-    }
-
-    @Override
-    public boolean disconnect() {
-        return true;
-    }
-
-    @Override
-    public boolean isConnected() {
-        return false;
-    }
-}
+package com.fibonsai.cryptomeria.xtratej.event.series.serde;
