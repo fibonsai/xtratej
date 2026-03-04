@@ -39,9 +39,9 @@ class RuleStreamTest {
     static class TestRuleStream extends RuleStream {
         private Function<ITemporalData[], BooleanSingle[]> predicateFunction;
 
-        protected TestRuleStream(JsonNode jsonNodeProperties) {
+        protected TestRuleStream(JsonNode params) {
             this.predicateFunction = _ -> new BooleanSingle[0]; // Default empty
-            setProperties(jsonNodeProperties);
+            setParams(params);
         }
 
         @Override
@@ -56,8 +56,8 @@ class RuleStreamTest {
 
     @Test
     void execute_emitsResult() throws InterruptedException {
-        JsonNode properties = nodeFactory.objectNode();
-        TestRuleStream ruleStream = new TestRuleStream(properties);
+        JsonNode params = nodeFactory.objectNode();
+        TestRuleStream ruleStream = new TestRuleStream(params);
 
         long timestamp = System.currentTimeMillis();
         BooleanSingle[] expectedBooleanSingles = {new BooleanSingle(timestamp, true)};

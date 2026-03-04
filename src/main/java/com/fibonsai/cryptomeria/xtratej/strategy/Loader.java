@@ -137,7 +137,7 @@ public class Loader {
         }
 
         RuleStream ruleInstance = ruleType.build()
-                .setProperties(ruleParams)
+                .setParams(ruleParams)
                 .setDescription(description);
 
         JsonNode firstInput = inputs.get(0);

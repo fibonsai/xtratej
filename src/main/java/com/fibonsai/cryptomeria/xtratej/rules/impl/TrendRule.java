@@ -36,8 +36,8 @@ public class TrendRule extends RuleStream {
     private boolean isRising = true;
 
     @Override
-    public RuleStream setProperties(JsonNode jsonNode) {
-        for (var e : jsonNode.properties()) {
+    public RuleStream setParams(JsonNode params) {
+        for (var e : params.properties()) {
             if ("sourceId".equals(e.getKey()) && e.getValue().isString()) {
                 sourceId = e.getValue().asString();
             }

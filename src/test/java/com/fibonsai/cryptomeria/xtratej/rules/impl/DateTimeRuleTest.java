@@ -38,17 +38,14 @@ class DateTimeRuleTest {
     private AutoCloseable closeable;
 
     @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    @Mock
     private ITemporalData mockTimeSeries;
 
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
         when(mockTimeSeries.timestamp()).thenReturn(123L);
     }
 
@@ -64,9 +61,9 @@ class DateTimeRuleTest {
     @Test
     void predicate_nowIsWithinRange_shouldReturnTrue() {
         LocalDateTime now = LocalDateTime.now();
-        properties.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        properties.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        DateTimeRule rule = switch (RuleType.DateTime.build().setProperties(properties)) {
+        params.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        params.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        DateTimeRule rule = switch (RuleType.DateTime.build().setParams(params)) {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
@@ -81,9 +78,9 @@ class DateTimeRuleTest {
     @Test
     void predicate_nowIsOutsideRange_shouldReturnFalse() {
         LocalDateTime now = LocalDateTime.now();
-        properties.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        properties.put("end", now.plusHours(2).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        DateTimeRule rule = switch (RuleType.DateTime.build().setProperties(properties)) {
+        params.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        params.put("end", now.plusHours(2).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        DateTimeRule rule = switch (RuleType.DateTime.build().setParams(params)) {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
@@ -99,10 +96,10 @@ class DateTimeRuleTest {
     void predicate_withCustomFormat_shouldEvaluateCorrectly() {
         LocalDateTime now = LocalDateTime.now();
         String format = "yyyy-MM-dd HH:mm";
-        properties.put("datetimeFormat", format);
-        properties.put("begin", now.minusMinutes(1).format(DateTimeFormatter.ofPattern(format)));
-        properties.put("end", now.plusMinutes(1).format(DateTimeFormatter.ofPattern(format)));
-        DateTimeRule rule = switch (RuleType.DateTime.build().setProperties(properties)) {
+        params.put("datetimeFormat", format);
+        params.put("begin", now.minusMinutes(1).format(DateTimeFormatter.ofPattern(format)));
+        params.put("end", now.plusMinutes(1).format(DateTimeFormatter.ofPattern(format)));
+        DateTimeRule rule = switch (RuleType.DateTime.build().setParams(params)) {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
@@ -118,9 +115,9 @@ class DateTimeRuleTest {
     void predicate_invertedRange_nowIsOutside_shouldReturnTrue() {
         LocalDateTime now = LocalDateTime.now();
         // Inverted range: true if now is NOT between end and begin
-        properties.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        properties.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        DateTimeRule rule = switch (RuleType.DateTime.build().setProperties(properties)) {
+        params.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        params.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        DateTimeRule rule = switch (RuleType.DateTime.build().setParams(params)) {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
@@ -134,7 +131,7 @@ class DateTimeRuleTest {
 
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        DateTimeRule rule = switch (RuleType.DateTime.build().setProperties(properties)) {
+        DateTimeRule rule = switch (RuleType.DateTime.build().setParams(params)) {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };

@@ -24,7 +24,6 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
@@ -35,15 +34,12 @@ class CrossedRuleTest {
 
     private AutoCloseable closeable;
 
-    @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
     }
 
     @AfterEach
@@ -64,10 +60,10 @@ class CrossedRuleTest {
     }
 
     @Test
-    void processProperties_shouldSetThresholdAndSourceId() {
-        properties.put("threshold", 50.5);
-        properties.put("sourceId", "comparator");
-        CrossedRule rule = RuleType.Crossed.build().setProperties(properties) instanceof CrossedRule crossedRule ? crossedRule : null;
+    void processParams_shouldSetThresholdAndSourceId() {
+        params.put("threshold", 50.5);
+        params.put("sourceId", "comparator");
+        CrossedRule rule = RuleType.Crossed.build().setParams(params) instanceof CrossedRule crossedRule ? crossedRule : null;
 
         // We can't directly test private fields, but we test the behavior in other tests
         assertNotNull(rule);
@@ -75,8 +71,8 @@ class CrossedRuleTest {
 
     @Test
     void predicate_crossedThreshold_shouldReturnTrue() {
-        properties.put("threshold", 50.0);
-        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+        params.put("threshold", 50.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -93,8 +89,8 @@ class CrossedRuleTest {
 
     @Test
     void predicate_notCrossedThreshold_shouldReturnFalse() {
-        properties.put("threshold", 70.0);
-        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+        params.put("threshold", 70.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -111,9 +107,9 @@ class CrossedRuleTest {
 
     @Test
     void predicate_seriesCrossed_shouldReturnTrue() {
-        properties.put("sourceId", "s2");
-        properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1").add("s2"));
-        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+        params.put("sourceId", "s2");
+        params.set("sources", JsonNodeFactory.instance.arrayNode().add("s1").add("s2"));
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -131,9 +127,9 @@ class CrossedRuleTest {
 
     @Test
     void predicate_seriesNotCrossed_shouldReturnFalse() {
-        properties.put("sourceId", "s2");
-        properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1").add("s2"));
-        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+        params.put("sourceId", "s2");
+        params.set("sources", JsonNodeFactory.instance.arrayNode().add("s1").add("s2"));
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -151,7 +147,7 @@ class CrossedRuleTest {
 
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };

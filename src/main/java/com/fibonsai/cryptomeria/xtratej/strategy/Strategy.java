@@ -20,7 +20,7 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.FalseRule;
 import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.sources.WithProperties;
+import com.fibonsai.cryptomeria.xtratej.sources.WithParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -36,7 +36,7 @@ public class Strategy implements IStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(Strategy.class);
 
-    public static final JsonNode EMPTY_PROPERTY = JsonNodeFactory.instance.objectNode();
+    public static final JsonNode EMPTY_PARAMS = JsonNodeFactory.instance.objectNode();
 
     private final String name;
     private final String symbol;
@@ -88,15 +88,15 @@ public class Strategy implements IStrategy {
 
     @Override
     public IStrategy addSource(SourceType sourceType, String name, String publisher) {
-        return addSource(sourceType, name, publisher, EMPTY_PROPERTY);
+        return addSource(sourceType, name, publisher, EMPTY_PARAMS);
     }
 
     @Override
-    public IStrategy addSource(SourceType sourceType, String name, String publisher, JsonNode properties) {
+    public IStrategy addSource(SourceType sourceType, String name, String publisher, JsonNode params) {
         if (!isActivated()) {
             Subscriber subscriber = sourceType.builder().setName(name).setPublisher(publisher).build();
-            if (subscriber instanceof WithProperties subscribeWithProperties) {
-                subscribeWithProperties.setProperties(properties);
+            if (subscriber instanceof WithParams subscribeWithParams) {
+                subscribeWithParams.setParams(params);
             }
             addSource(subscriber);
         }

@@ -30,7 +30,7 @@ public abstract class RuleStream {
 
     private String description = "";
 
-    public RuleStream setProperties(JsonNode properties) {
+    public RuleStream setParams(JsonNode params) {
         return this;
     }
 

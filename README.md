@@ -98,11 +98,11 @@ The `Loader` class expects a JSON structure as follows:
       - `[sourceName]`: (Object) Key is the source identifier.
         - `type`: (String) Source type (e.g., "SIMULATED", "NATS").
         - `publisher`: (String) Publisher identifier.
-        - `params`: (Object) Source-specific properties.
+        - `params`: (Object) Source-specific params.
     - `rule`: (Object) The root rule definition.
       - `type`: (String) Rule type (e.g., "And", "Or", "Limit", "Crossed").
       - `description`: (String) Optional description.
-      - `params`: (Object) Rule properties (e.g., `{"min": 10.0, "max": 20.0}`).
+      - `params`: (Object) Rule params (e.g., `{"min": 10.0, "max": 20.0}`).
       - `inputs`: (Array) data sources name list (string list), declared in `sources` attribute, OR nested rule objects.
 
 ##### Example Json

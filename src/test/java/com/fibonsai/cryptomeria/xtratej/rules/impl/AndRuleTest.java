@@ -23,7 +23,6 @@ import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.function.Function;
@@ -33,9 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AndRuleTest {
 
     private AutoCloseable closeable;
-
-    @Mock
-    private Fifo<ITemporalData> mockResults;
 
     private AndRule andRule;
 

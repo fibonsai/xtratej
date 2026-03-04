@@ -24,7 +24,6 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
@@ -35,15 +34,12 @@ class InSlopeRuleTest {
 
     private AutoCloseable closeable;
 
-    @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
     }
 
     @AfterEach
@@ -64,18 +60,18 @@ class InSlopeRuleTest {
     }
 
     @Test
-    void processProperties_shouldSetSlopes() {
-        properties.put("minSlope", 0.5);
-        properties.put("maxSlope", 1.5);
-        InSlopeRule rule = RuleType.InSlope.build().setProperties(properties) instanceof InSlopeRule r ? r : null;
+    void processParams_shouldSetSlopes() {
+        params.put("minSlope", 0.5);
+        params.put("maxSlope", 1.5);
+        InSlopeRule rule = RuleType.InSlope.build().setParams(params) instanceof InSlopeRule r ? r : null;
         assertNotNull(rule);
     }
 
     @Test
     void predicate_slopeWithinRange_shouldReturnTrue() {
-        properties.put("minSlope", 0.5);
-        properties.put("maxSlope", 1.5);
-        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+        params.put("minSlope", 0.5);
+        params.put("maxSlope", 1.5);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setParams(params)) {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -91,8 +87,8 @@ class InSlopeRuleTest {
 
     @Test
     void predicate_slopeBelowMin_shouldReturnFalse() {
-        properties.put("minSlope", 1.5);
-        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+        params.put("minSlope", 1.5);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setParams(params)) {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -108,8 +104,8 @@ class InSlopeRuleTest {
 
     @Test
     void predicate_slopeAboveMax_shouldReturnFalse() {
-        properties.put("maxSlope", 0.5);
-        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+        params.put("maxSlope", 0.5);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setParams(params)) {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -125,7 +121,7 @@ class InSlopeRuleTest {
 
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+        InSlopeRule rule = switch (RuleType.InSlope.build().setParams(params)) {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };

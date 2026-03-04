@@ -39,17 +39,14 @@ class TimeRuleTest {
     private AutoCloseable closeable;
 
     @Mock
-    private Fifo<ITemporalData> mockResults;
-
-    @Mock
     private ITemporalData mockTimeSeries;
 
-    private ObjectNode properties;
+    private ObjectNode params;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        properties = JsonNodeFactory.instance.objectNode();
+        params = JsonNodeFactory.instance.objectNode();
         when(mockTimeSeries.timestamp()).thenReturn(123L);
     }
 
@@ -66,9 +63,9 @@ class TimeRuleTest {
     @Test
     void predicate_nowIsWithinRange_shouldReturnTrue() {
         LocalTime now = LocalTime.now();
-        properties.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        properties.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        TimeRule rule = switch (RuleType.Time.build().setProperties(properties)) {
+        params.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        params.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        TimeRule rule = switch (RuleType.Time.build().setParams(params)) {
             case TimeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -83,9 +80,9 @@ class TimeRuleTest {
     @Test
     void predicate_nowIsOutsideRange_shouldReturnFalse() {
         LocalTime now = LocalTime.now();
-        properties.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        properties.put("end", now.plusHours(2).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        TimeRule rule = switch (RuleType.Time.build().setProperties(properties)) {
+        params.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        params.put("end", now.plusHours(2).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        TimeRule rule = switch (RuleType.Time.build().setParams(params)) {
             case TimeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -100,10 +97,10 @@ class TimeRuleTest {
     @Test
     void predicate_invertedRange_nowIsInside_shouldReturnFalse() {
         LocalTime now = LocalTime.now();
-        // Inverted range means end = MAX if invert property is default (false)
-        properties.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        properties.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        TimeRule rule = switch (RuleType.Time.build().setProperties(properties)) {
+        // Inverted range means end = MAX if `invert` param is default (false)
+        params.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        params.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        TimeRule rule = switch (RuleType.Time.build().setParams(params)) {
             case TimeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -120,9 +117,9 @@ class TimeRuleTest {
     void predicate_invertedRange_with_invertFlag_nowIsInside_shouldReturnTrue() {
         LocalTime now = LocalTime.now();
         // Inverted range with invert = true means we check if now is OUTSIDE the range from end to begin
-        properties.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        properties.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
-        TimeRule rule = switch (RuleType.Time.build().setProperties(properties)) {
+        params.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        params.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
+        TimeRule rule = switch (RuleType.Time.build().setParams(params)) {
             case TimeRule r -> r;
             default -> throw new RuntimeException();
         };
@@ -138,7 +135,7 @@ class TimeRuleTest {
 
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        TimeRule rule = switch (RuleType.Time.build().setProperties(properties)) {
+        TimeRule rule = switch (RuleType.Time.build().setParams(params)) {
             case TimeRule r -> r;
             default -> throw new RuntimeException();
         };

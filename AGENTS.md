@@ -32,11 +32,11 @@ This document provides instructions and context for AI agents working on the `xt
 ## Architecture decisions
 * Wiring Mechanism: The Loader class is responsible for wiring. It parses a JSON definition where sources are defined first. Rules then specify their inputs which can be names of these sources or nested rule definitions.
 * Reactive Data Flow: Connection is achieved using Fifo<ITemporalData>. Loader.parseRule collects the FIFOs from the named sources (via strategy.getSources().get(inputName).toFifo()), zips them using Fifo.zip(), and passes the resulting zipped FIFO to RuleStream.watch().
-* LimitRule Logic: LimitRule specifically looks for upperSourceId and lowerSourceId in its properties. In its predicate function, it iterates through the provided ITemporalData[] array (produced by the zipped FIFO) and matches TimeSeries IDs against these properties to determine dynamic boundaries. If no dynamic boundaries are found, it falls back to fixed min/max values.
+* LimitRule Logic: LimitRule specifically looks for upperSourceId and lowerSourceId in its params. In its predicate function, it iterates through the provided ITemporalData[] array (produced by the zipped FIFO) and matches TimeSeries IDs against these params to determine dynamic boundaries. If no dynamic boundaries are found, it falls back to fixed min/max values.
 * Strategy Integration: Strategy acts as a container. StrategyManager runs strategies by subscribing to the root rule's (aggregator) result FIFO. When the rule evaluates to true, a TradingSignal is emitted.
 
 ## Exploring the code
-* "Read @src/main/java/com/fibonsai/cryptomeria/xtratej/rules/impl/LimitRule.java to understand its logic and properties (min, max, upperSourceId, lowerSourceId).
+* "Read @src/main/java/com/fibonsai/cryptomeria/xtratej/rules/impl/LimitRule.java to understand its logic and params (min, max, upperSourceId, lowerSourceId).
 * "Read @src/main/java/com/fibonsai/cryptomeria/xtratej/rules/RuleStream.java to understand the base rule class and the watch mechanism using Fifo.
 * "Read @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/Strategy.java and @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
 * "Read @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/StrategyManager.java to see how strategies are executed and how results are handled.
@@ -59,7 +59,7 @@ This document provides instructions and context for AI agents working on the `xt
 2.  Implement the `predicate()` method.
 3.  Add unit tests in `src/test/java/.../rules/impl/`.
 4.  Update `RuleType` enum.
-5.  If the rule requires configuration, use `JsonNode` properties and call method `public RuleStream setProperties(JsonNode jsonNode)` or add fluent setter methods.
+5.  If the rule requires configuration, use `JsonNode` params and call method `RuleStream.setParams(JsonNode params)` or add fluent setter methods.
 
 ### Debugging
 *   Check `pom.xml` for dependency versions if you encounter build issues.
