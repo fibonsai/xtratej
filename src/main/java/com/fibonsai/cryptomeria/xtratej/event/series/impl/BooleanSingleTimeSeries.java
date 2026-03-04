@@ -16,7 +16,13 @@ package com.fibonsai.cryptomeria.xtratej.event.series.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.serde.BooleanSingleTimeSeriesDeserializer;
+import com.fibonsai.cryptomeria.xtratej.event.series.serde.BooleanSingleTimeSeriesSerializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
+@JsonSerialize(using = BooleanSingleTimeSeriesSerializer.class)
+@JsonDeserialize(using = BooleanSingleTimeSeriesDeserializer.class)
 public class BooleanSingleTimeSeries extends TimeSeries {
 
     private boolean[] values;
