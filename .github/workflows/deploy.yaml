@@ -15,11 +15,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 25
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: '25'
-        distribution: 'temurin'
+        distribution: 'liberica'
         cache: maven
+    - name: packaging
+      run: mvn --batch-mode --update-snapshots --no-transfer-progress clean package
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy with Maven
       run: ./mvnw -B deploy
       env:
