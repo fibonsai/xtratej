@@ -16,8 +16,8 @@ package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.EmptyTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.slf4j.Logger;
@@ -61,26 +61,26 @@ public class LimitRule extends RuleStream {
             TimeSeries tsUpper = EmptyTimeSeries.INSTANCE;
             TimeSeries tsLower = EmptyTimeSeries.INSTANCE;
             for (var timeSeries : timeSeriesArray) {
-                if (timeSeries instanceof SingleTimeSeries && Objects.equals(timeSeries.id(), upperSourceId)) tsUpper = timeSeries;
-                if (timeSeries instanceof SingleTimeSeries && Objects.equals(timeSeries.id(), lowerSourceId)) tsLower = timeSeries;
+                if (timeSeries instanceof DoubleTimeSeries && Objects.equals(timeSeries.id(), upperSourceId)) tsUpper = timeSeries;
+                if (timeSeries instanceof DoubleTimeSeries && Objects.equals(timeSeries.id(), lowerSourceId)) tsLower = timeSeries;
             }
 
             loop1:
             for (var timeSeries: timeSeriesArray) {
-                if (timeSeries instanceof SingleTimeSeries singleTimeSeries) {
-                    if (Objects.equals(singleTimeSeries.id(), tsUpper.id()) || Objects.equals(singleTimeSeries.id(), tsLower.id())) {
+                if (timeSeries instanceof DoubleTimeSeries doubleTimeSeries) {
+                    if (Objects.equals(doubleTimeSeries.id(), tsUpper.id()) || Objects.equals(doubleTimeSeries.id(), tsLower.id())) {
                         continue;
                     }
-                    if (singleTimeSeries.size() > 0) {
-                        lastTimestamp = singleTimeSeries.timestamp();
-                        for (int x = singleTimeSeries.size() - 1; x >= 0; x--) {
-                            double value = singleTimeSeries.values()[x];
+                    if (doubleTimeSeries.size() > 0) {
+                        lastTimestamp = doubleTimeSeries.timestamp();
+                        for (int x = doubleTimeSeries.size() - 1; x >= 0; x--) {
+                            double value = doubleTimeSeries.values()[x];
                             if (tsUpper.size() > 0) {
                                 int topIndex = tsUpper.size() - 1 - x;
                                 if (topIndex < 0) {
                                     break;
                                 }
-                                if (((SingleTimeSeries)tsUpper).values()[topIndex] < value) {
+                                if (((DoubleTimeSeries)tsUpper).values()[topIndex] < value) {
                                     result = false;
                                     break loop1;
                                 }
@@ -90,7 +90,7 @@ public class LimitRule extends RuleStream {
                                 if (loweIndex < 0) {
                                     break;
                                 }
-                                if (((SingleTimeSeries)tsLower).values()[loweIndex] > value) {
+                                if (((DoubleTimeSeries)tsLower).values()[loweIndex] > value) {
                                     result = false;
                                     break loop1;
                                 }

@@ -19,7 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ class NotRuleTest {
 
     @Test
     void predicate_withNonBooleanTimeSeries_shouldReturnEmptyArray() {
-        TimeSeries series = new SingleTimeSeriesBuilder().setId("s1").add(100L, 1.0).build();
+        TimeSeries series = new DoubleTimeSeriesBuilder().setId("s1").add(100L, 1.0).build();
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = notRule.predicate().apply(input);

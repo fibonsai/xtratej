@@ -19,7 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.EmptyTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
@@ -60,10 +60,10 @@ class RuleStreamTest {
         TestRuleStream ruleStream = new TestRuleStream(params);
 
         long timestamp = System.currentTimeMillis();
-        BooleanTimeSeries[] expectedBooleanSingles = { new BooleanTimeSeriesBuilder().add(timestamp, true).build() };
-        ruleStream.setPredicateFunction(_ -> expectedBooleanSingles);
+        BooleanTimeSeries[] expectedBooleanTimeSeriesArray = { new BooleanTimeSeriesBuilder().add(timestamp, true).build() };
+        ruleStream.setPredicateFunction(_ -> expectedBooleanTimeSeriesArray);
 
-        TimeSeries[] timeSeriesArray = { new SingleTimeSeriesBuilder().add(0, 0.0).build() } ;
+        TimeSeries[] timeSeriesArray = { new DoubleTimeSeriesBuilder().add(0, 0.0).build() } ;
         var inputStream = new Fifo<TimeSeries[]>();
         ruleStream.watch(inputStream);
         AtomicReference<TimeSeries> result = new AtomicReference<>(EmptyTimeSeries.INSTANCE);
@@ -80,7 +80,7 @@ class RuleStreamTest {
         BooleanTimeSeries booleanSeries = (BooleanTimeSeries) emittedSeries;
 
         assertEquals(1, booleanSeries.size());
-        assertEquals(expectedBooleanSingles[0].timestamp(), booleanSeries.timestamps()[0]);
-        assertEquals(expectedBooleanSingles[0].values()[0], booleanSeries.values()[0]);
+        assertEquals(expectedBooleanTimeSeriesArray[0].timestamp(), booleanSeries.timestamps()[0]);
+        assertEquals(expectedBooleanTimeSeriesArray[0].values()[0], booleanSeries.values()[0]);
     }
 }

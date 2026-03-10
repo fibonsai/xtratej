@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.tools;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.*;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,40 +42,40 @@ public class MinMaxTest {
     }
 
     @Test
-    public void singleTimeSeriesTest() {
-        var minMaxResult = MinMax.from(new SingleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{1.0D, 2.0D, 3.0D}));
+    public void doubleTimeSeriesTest() {
+        var minMaxResult = MinMax.from(new DoubleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{1.0D, 2.0D, 3.0D}));
 
         Assertions.assertEquals(1.0D, minMaxResult.min());
         Assertions.assertEquals(3.0D, minMaxResult.max());
     }
 
     @Test
-    public void singleTimeSeriesAllPositiveInfTest() {
-        var minMaxResult = MinMax.from(new SingleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}));
+    public void doubleTimeSeriesAllPositiveInfTest() {
+        var minMaxResult = MinMax.from(new DoubleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}));
 
         Assertions.assertTrue(Double.isNaN(minMaxResult.min()));
         Assertions.assertTrue(Double.isNaN(minMaxResult.max()));
     }
 
     @Test
-    public void singleTimeSeriesAllNegativeInfTest() {
-        var minMaxResult = MinMax.from(new SingleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY}));
+    public void doubleTimeSeriesAllNegativeInfTest() {
+        var minMaxResult = MinMax.from(new DoubleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY}));
 
         Assertions.assertTrue(Double.isNaN(minMaxResult.min()));
         Assertions.assertTrue(Double.isNaN(minMaxResult.max()));
     }
 
     @Test
-    public void singleTimeSeriesAllNaNTest() {
-        var minMaxResult = MinMax.from(new SingleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{Double.NaN, Double.NaN, Double.NaN}));
+    public void doubleTimeSeriesAllNaNTest() {
+        var minMaxResult = MinMax.from(new DoubleTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{Double.NaN, Double.NaN, Double.NaN}));
 
         Assertions.assertTrue(Double.isNaN(minMaxResult.min()));
         Assertions.assertTrue(Double.isNaN(minMaxResult.max()));
     }
 
     @Test
-    public void correlatedTimeSeriesTest() {
-        var minMaxResult = MinMax.from(new CorrelatedTimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{1.0D, 2.0D, 3.0D}, new double[]{4.0D, 5.0D, 6.0D}));
+    public void double2TimeSeriesTest() {
+        var minMaxResult = MinMax.from(new Double2TimeSeries("x", new long[]{1000L, 2000L, 3000L}, new double[]{1.0D, 2.0D, 3.0D}, new double[]{4.0D, 5.0D, 6.0D}));
 
         Assertions.assertEquals(1.0D, minMaxResult.min());
         Assertions.assertEquals(6.0D, minMaxResult.max());
@@ -109,12 +109,12 @@ public class MinMaxTest {
     
     @Test
     public void testTwoValuesMinmax() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x");
         double[] values = {3.0D, 7.0D};
         for (var value: values) {
             builder.add(random.nextLong(), value);
         }
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
         var minMaxResult = MinMax.from(timeSeries);
 
         Assertions.assertEquals(3.0D, minMaxResult.min());
@@ -123,12 +123,12 @@ public class MinMaxTest {
 
     @Test
     public void testNegativeValuesMinmax() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x");
         double[] values = {-3.0D, -7.0D};
         for (var value: values) {
             builder.add(random.nextLong(), value);
         }
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
         var minMaxResult = MinMax.from(timeSeries);
 
         Assertions.assertEquals(-7.0D, minMaxResult.min());
@@ -137,12 +137,12 @@ public class MinMaxTest {
 
     @Test
     public void testMixedValuesMinmax() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x");
         double[] values = {-5.0D, 3.0D, -10.0D, 15.0D};
         for (var value: values) {
             builder.add(random.nextLong(), value);
         }
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
         var minMaxResult = MinMax.from(timeSeries);
 
         Assertions.assertEquals(-10.0D, minMaxResult.min());
@@ -150,13 +150,13 @@ public class MinMaxTest {
     }
 
     @Test
-    public void testSingleValueMinmax() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
+    public void testDoubleValueMinmax() {
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x");
         double[] values = {5.0D};
         for (var value: values) {
             builder.add(random.nextLong(), value);
         }
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
         var minMaxResult = MinMax.from(timeSeries);
 
         Assertions.assertEquals(5.0D, minMaxResult.min());
@@ -165,8 +165,8 @@ public class MinMaxTest {
 
     @Test
     public void testEmptyArrayMinmax() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x");
+        DoubleTimeSeries timeSeries = builder.build();
         var minMaxResult = MinMax.from(timeSeries);
 
         Assertions.assertEquals(0, timeSeries.size());

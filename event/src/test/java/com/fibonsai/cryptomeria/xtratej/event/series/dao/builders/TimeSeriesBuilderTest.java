@@ -28,9 +28,9 @@ public class TimeSeriesBuilderTest {
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Test
-    public void testAddSingle() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder();
-        SingleTimeSeries timeSeries = builder.add(1000L, 1.0D).setId("x").build();
+    public void testAddDoubleTimeSeries() {
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder();
+        DoubleTimeSeries timeSeries = builder.add(1000L, 1.0D).setId("x").build();
 
         long[] expectedTimestamps = {1000L};
         double[] expectedValues = {1.0D};
@@ -42,9 +42,9 @@ public class TimeSeriesBuilderTest {
     }
 
     @Test
-    public void testAddCorrelated() {
-        CorrelatedTimeSeriesBuilder builder = new CorrelatedTimeSeriesBuilder();
-        CorrelatedTimeSeries timeSeries = builder.add(1000L, 1.0D, 2.0D).setId("x").build();
+    public void testAddDouble2TimeSeries() {
+        Double2TimeSeriesBuilder builder = new Double2TimeSeriesBuilder();
+        Double2TimeSeries timeSeries = builder.add(1000L, 1.0D, 2.0D).setId("x").build();
 
         long[] expectedTimestamps = {1000L};
         double[] expectedValues = {1.0D};
@@ -58,7 +58,7 @@ public class TimeSeriesBuilderTest {
     }
 
     @Test
-    public void testAddBar() {
+    public void testAddBarTimeSeries() {
         BarTimeSeriesBuilder builder = new BarTimeSeriesBuilder();
         BarTimeSeries timeSeries = builder.add(1000L, 1.0D, 2.0D, 3.0D, 4.0D, 5.0D).setId("x").build();
 
@@ -80,7 +80,7 @@ public class TimeSeriesBuilderTest {
     }
 
     @Test
-    public void testAddBand() {
+    public void testAddBandTimeSeries() {
         BandTimeSeriesBuilder builder = new BandTimeSeriesBuilder();
         BandTimeSeries timeSeries = builder.add(1000L, 1.0D, 2.0D, 3.0D).setId("x").build();
 
@@ -112,25 +112,9 @@ public class TimeSeriesBuilderTest {
     }
 
     @Test
-    public void testAddCorrelatedTimeSeries() {
-        CorrelatedTimeSeriesBuilder builder = new CorrelatedTimeSeriesBuilder();
-        CorrelatedTimeSeries timeSeries = builder.add(1000L, 1.0D, 2.0D).setId("x").build();
-
-        long[] expectedTimestamps = {1000L};
-        double[] expectedValues = {1.0D};
-        double[] expectedValues2 = {2.0D};
-        String expectedId = "x";
-
-        assertArrayEquals(timeSeries.timestamps(), expectedTimestamps);
-        assertArrayEquals(timeSeries.values(), expectedValues);
-        assertArrayEquals(timeSeries.values2(), expectedValues2);
-        assertEquals(expectedId, timeSeries.id());
-    }
-
-    @Test
     public void testMaxSizeOne() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x").setMaxSize(1);
-        SingleTimeSeries timeSeries = builder
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x").setMaxSize(1);
+        DoubleTimeSeries timeSeries = builder
                 .add(1000L, 1.0D)
                 .add(2000L, 1.0D)
                 .build();
@@ -140,8 +124,8 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testSetMaxSize() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
-        SingleTimeSeries timeSeries = builder
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId("x");
+        DoubleTimeSeries timeSeries = builder
                 .setMaxSize(2)
                 .add(1000L, 1.0D)
                 .add(2000L, 1.0D)
@@ -155,7 +139,7 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testTimestampSorted() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setMaxSize(10).setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setMaxSize(10).setId("x");
 
         ArrayList<Long> timestamps = new ArrayList<>();
         for (int x = 0; x < 10; x++) {
@@ -163,7 +147,7 @@ public class TimeSeriesBuilderTest {
             builder.add(timestamp, 1.0D);
             timestamps.add(timestamp);
         }
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
 
         long[] expected = timestamps.stream().sorted().mapToLong(Long::longValue).toArray();
         assertArrayEquals(timeSeries.timestamps(), expected);
@@ -171,7 +155,7 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testValuesLinkedWithSortedTimestamp() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setMaxSize(10).setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setMaxSize(10).setId("x");
 
         ArrayList<Long> timestamps = new ArrayList<>();
         for (int x = 0; x < 10; x++) {
@@ -179,7 +163,7 @@ public class TimeSeriesBuilderTest {
             builder.add(timestamp, timestamp / 2.0);
             timestamps.add(timestamp);
         }
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
 
         double[] expected = timestamps.stream().sorted().mapToDouble(l -> l / 2.0D).toArray();
         double[] values = timeSeries.values();
@@ -187,8 +171,8 @@ public class TimeSeriesBuilderTest {
     }
 
     @Test
-    public void testEmptySingleTimeSeries() {
-        SingleTimeSeries timeSeries = new SingleTimeSeriesBuilder().build();
+    public void testDoubleTimeSeriesEmpty() {
+        DoubleTimeSeries timeSeries = new DoubleTimeSeriesBuilder().build();
 
         assertEquals(0, timeSeries.size());
         assertEquals(0, timeSeries.values().length);
@@ -197,7 +181,7 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testTimeSeriesConcurrency() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setMaxSize(100).setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setMaxSize(100).setId("x");
 
         Thread[] threads = new Thread[10];
         for (int i = 0; i < threads.length; i++) {
@@ -219,7 +203,7 @@ public class TimeSeriesBuilderTest {
             }
         }
 
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
 
         Assertions.assertTrue(timeSeries.size() > 0);
         long[] ts = timeSeries.timestamps();
@@ -230,11 +214,11 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testLargeTimestamps() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setMaxSize(5).setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setMaxSize(5).setId("x");
         builder.add(Long.MAX_VALUE - 1000, 1.0D);
         builder.add(Long.MAX_VALUE - 2000, 2.0D);
         builder.add(Long.MAX_VALUE - 3000, 3.0D);
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
 
         assertEquals(3, timeSeries.size());
         long[] timestamps = timeSeries.timestamps();
@@ -245,11 +229,11 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testSameTimestampsSorted() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setMaxSize(5).setId("x");
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setMaxSize(5).setId("x");
         builder.add(1000, 1.0D);
         builder.add(1000, 2.0D);
         builder.add(1000, 3.0D);
-        SingleTimeSeries timeSeries = builder.build();
+        DoubleTimeSeries timeSeries = builder.build();
 
         double[] values = timeSeries.values();
         double[] expected = { 3.0D };
@@ -258,8 +242,8 @@ public class TimeSeriesBuilderTest {
 
     @Test
     public void testOverwriteMaxSize() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setMaxSize(3).setId("x");
-        SingleTimeSeries timeSeries = builder
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setMaxSize(3).setId("x");
+        DoubleTimeSeries timeSeries = builder
                 .add(1000L, 1.0D)
                 .add(2000L, 1.0D)
                 .add(3000L, 1.0D)

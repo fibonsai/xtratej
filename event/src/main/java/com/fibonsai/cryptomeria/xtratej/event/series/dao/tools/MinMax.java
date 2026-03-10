@@ -31,7 +31,7 @@ public class MinMax {
         double max = Double.NEGATIVE_INFINITY;
 
         switch (timeSeries) {
-            case SingleTimeSeries ts -> {
+            case DoubleTimeSeries ts -> {
                 for (var value : ts.values()) {
                     if (Double.isNaN(value)) continue;
                     if (value < min) {
@@ -42,7 +42,7 @@ public class MinMax {
                     }
                 }
             }
-            case CorrelatedTimeSeries ts -> {
+            case Double2TimeSeries ts -> {
                 for (int x = 0; x < ts.size(); x++) {
                     double value = ts.values()[x];
                     double value2 = ts.values2()[x];

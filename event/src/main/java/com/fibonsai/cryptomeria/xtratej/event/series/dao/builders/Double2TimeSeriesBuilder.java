@@ -14,17 +14,17 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.CorrelatedTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.Double2TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
-public class CorrelatedTimeSeriesBuilder extends TimeSeriesBuilder<CorrelatedTimeSeriesBuilder> {
+public class Double2TimeSeriesBuilder extends TimeSeriesBuilder<Double2TimeSeriesBuilder> {
 
     private final TreeMap<Long, Double> doubles = new TreeMap<>();
     private final TreeMap<Long, Double> doubles2 = new TreeMap<>();
 
-    public CorrelatedTimeSeriesBuilder add(long timestamp, double value, double value2) {
+    public Double2TimeSeriesBuilder add(long timestamp, double value, double value2) {
         writeLock.lock();
         try {
             while (doubles.size() >= maxSize) {
@@ -44,21 +44,21 @@ public class CorrelatedTimeSeriesBuilder extends TimeSeriesBuilder<CorrelatedTim
 
 
     @Override
-    public CorrelatedTimeSeries build() {
+    public Double2TimeSeries build() {
         readLock.lock();
         try {
             long[] _timestamps = doubles.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
             double[] _doubles = doubles.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
             double[] _doubles2 = doubles2.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            return new CorrelatedTimeSeries(id, _timestamps, _doubles, _doubles2);
+            return new Double2TimeSeries(id, _timestamps, _doubles, _doubles2);
         } finally {
             readLock.unlock();
         }
     }
 
     @Override
-    public CorrelatedTimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof CorrelatedTimeSeries(String id1, long[] timestamps, double[] values, double[] values2)) {
+    public Double2TimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof Double2TimeSeries(String id1, long[] timestamps, double[] values, double[] values2)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], values[x], values2[x]);
                 setId(id1);
@@ -68,7 +68,7 @@ public class CorrelatedTimeSeriesBuilder extends TimeSeriesBuilder<CorrelatedTim
     }
 
     @Override
-    public CorrelatedTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+    public Double2TimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
         for (var timeSeries: timeSeriesArray) {
             from(timeSeries);
         }

@@ -18,7 +18,7 @@ import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.WithParams;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;
@@ -41,7 +41,7 @@ import static com.fibonsai.cryptomeria.xtratej.engine.sources.impl.NatsSubscribe
 
 public class NatsSubscriber extends Subscriber implements WithParams {
 
-    public static final List<Class<? extends TimeSeries>> CLASSES_SUPPORTED = List.of(SingleTimeSeries.class, BarTimeSeries.class, BooleanTimeSeries.class);
+    public static final List<Class<? extends TimeSeries>> CLASSES_SUPPORTED = List.of(DoubleTimeSeries.class, BarTimeSeries.class, BooleanTimeSeries.class);
 
     public enum NatsKey {
         NATS_CREDS("nats-creds"),

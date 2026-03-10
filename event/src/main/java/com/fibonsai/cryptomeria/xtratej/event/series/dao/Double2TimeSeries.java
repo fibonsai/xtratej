@@ -16,14 +16,14 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record SingleTimeSeries(@Nullable String id, long[] timestamps, double[] values) implements TimeSeries {
+public record Double2TimeSeries(@Nullable String id, long[] timestamps, double[] values, double[] values2) implements TimeSeries {
 
-    public SingleTimeSeries {
+    public Double2TimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");
     }
 
-    public SingleTimeSeries(long[] timestamps, double[] values) {
-        this(null, timestamps, values);
+    public Double2TimeSeries(long[] timestamps, double[] values, double[] values2) {
+        this(null, timestamps, values, values2);
     }
 
     @Override

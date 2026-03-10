@@ -18,9 +18,9 @@ package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +51,8 @@ class TrendRuleTest {
         }
     }
 
-    private SingleTimeSeries createSingleTimeSeries(String name, long[] timestamps, double[] values) {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId(name);
+    private DoubleTimeSeries createDoubleTimeSeries(String name, long[] timestamps, double[] values) {
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId(name);
         for (int i = 0; i < values.length; i++) {
             builder.add(timestamps[i], values[i]);
         }
@@ -76,7 +76,7 @@ class TrendRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Rising
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Rising
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -93,7 +93,7 @@ class TrendRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -110,7 +110,7 @@ class TrendRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -129,8 +129,8 @@ class TrendRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries s1 = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope 1.0
-        TimeSeries s2 = createSingleTimeSeries("s2", new long[]{1, 2, 3}, new double[]{1, 1.5, 2}); // Slope 0.5
+        TimeSeries s1 = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope 1.0
+        TimeSeries s2 = createDoubleTimeSeries("s2", new long[]{1, 2, 3}, new double[]{1, 1.5, 2}); // Slope 0.5
         TimeSeries[] input = new TimeSeries[]{s1, s2};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);

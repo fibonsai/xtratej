@@ -19,7 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,7 +114,7 @@ class AndRuleTest {
     void predicate_shouldIgnoreNonBooleanTimeSeries() {
         // Arrange
         TimeSeries series1 = createBooleanSeries("s1", 100L, true);
-        TimeSeries series2 = new SingleTimeSeriesBuilder().setId("s2").add(101L, 1.0).build();
+        TimeSeries series2 = new DoubleTimeSeriesBuilder().setId("s2").add(101L, 1.0).build();
         TimeSeries[] input = {series1, series2};
 
         // Act

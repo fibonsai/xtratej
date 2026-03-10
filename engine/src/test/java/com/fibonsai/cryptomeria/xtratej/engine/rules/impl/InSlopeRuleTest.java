@@ -18,9 +18,9 @@ package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +51,8 @@ class InSlopeRuleTest {
         }
     }
 
-    private SingleTimeSeries createSingleTimeSeries(String name, long[] timestamps, double[] values) {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId(name);
+    private DoubleTimeSeries createDoubleTimeSeries(String name, long[] timestamps, double[] values) {
+        DoubleTimeSeriesBuilder builder = new DoubleTimeSeriesBuilder().setId(name);
         for (int i = 0; i < values.length; i++) {
             builder.add(timestamps[i], values[i]);
         }
@@ -77,7 +77,7 @@ class InSlopeRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -94,7 +94,7 @@ class InSlopeRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -111,7 +111,7 @@ class InSlopeRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        TimeSeries series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
 
         BooleanTimeSeries[] result = rule.predicate().apply(input);

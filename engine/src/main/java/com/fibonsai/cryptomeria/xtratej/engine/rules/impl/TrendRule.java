@@ -16,8 +16,8 @@ package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.EmptyTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.hipparchus.stat.regression.SimpleRegression;
@@ -64,17 +64,17 @@ public class TrendRule extends RuleStream {
                 }
             }
 
-            double slopeComparable = (timeSeriesComparator != EmptyTimeSeries.INSTANCE) && timeSeriesComparator instanceof SingleTimeSeries ts ? getSlope(ts) : 0.0D;
+            double slopeComparable = (timeSeriesComparator != EmptyTimeSeries.INSTANCE) && timeSeriesComparator instanceof DoubleTimeSeries ts ? getSlope(ts) : 0.0D;
 
             Boolean allresult = null;
             long lastTimestamp = 0;
             for (var timeSeries: timeSeriesArray) {
-                if (timeSeries instanceof SingleTimeSeries singleTimeSeries && singleTimeSeries.size() > 0) {
-                    if (Objects.equals(timeSeriesComparator.id(), singleTimeSeries.id())) {
+                if (timeSeries instanceof DoubleTimeSeries doubleTimeSeries && doubleTimeSeries.size() > 0) {
+                    if (Objects.equals(timeSeriesComparator.id(), doubleTimeSeries.id())) {
                         continue;
                     }
-                    double slope = getSlope(singleTimeSeries);
-                    lastTimestamp = singleTimeSeries.timestamp();
+                    double slope = getSlope(doubleTimeSeries);
+                    lastTimestamp = doubleTimeSeries.timestamp();
 
                     boolean result = isRising ? slope > slopeComparable : slope < slopeComparable;
                     allresult = allresult == null ? result : allresult && result;
@@ -95,7 +95,7 @@ public class TrendRule extends RuleStream {
         return this;
     }
 
-    private double getSlope(SingleTimeSeries series) {
+    private double getSlope(DoubleTimeSeries series) {
         regression.clear();
         for (int x = 0; x < series.size(); x++) {
             double doubleTimestamp = series.timestamps()[x];

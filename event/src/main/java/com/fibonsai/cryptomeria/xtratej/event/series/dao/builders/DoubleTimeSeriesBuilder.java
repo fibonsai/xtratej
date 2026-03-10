@@ -14,16 +14,16 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
-public class SingleTimeSeriesBuilder extends TimeSeriesBuilder<SingleTimeSeriesBuilder> {
+public class DoubleTimeSeriesBuilder extends TimeSeriesBuilder<DoubleTimeSeriesBuilder> {
 
     private final TreeMap<Long, Double> doubles = new TreeMap<>();
 
-    public SingleTimeSeriesBuilder add(long timestamp, double value) {
+    public DoubleTimeSeriesBuilder add(long timestamp, double value) {
         writeLock.lock();
         try {
             while (doubles.size() >= maxSize) {
@@ -38,20 +38,20 @@ public class SingleTimeSeriesBuilder extends TimeSeriesBuilder<SingleTimeSeriesB
     }
 
     @Override
-    public SingleTimeSeries build() {
+    public DoubleTimeSeries build() {
         readLock.lock();
         try {
             long[] _timestamps = doubles.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
             double[] _doubles = doubles.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            return new SingleTimeSeries(id, _timestamps, _doubles);
+            return new DoubleTimeSeries(id, _timestamps, _doubles);
         } finally {
             readLock.unlock();
         }
     }
 
     @Override
-    public SingleTimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof SingleTimeSeries(String id1, long[] timestamps, double[] values)) {
+    public DoubleTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof DoubleTimeSeries(String id1, long[] timestamps, double[] values)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], values[x]);
                 setId(id1);
@@ -61,7 +61,7 @@ public class SingleTimeSeriesBuilder extends TimeSeriesBuilder<SingleTimeSeriesB
     }
 
     @Override
-    public SingleTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+    public DoubleTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
         for (var timeSeries: timeSeriesArray) {
             from(timeSeries);
         }

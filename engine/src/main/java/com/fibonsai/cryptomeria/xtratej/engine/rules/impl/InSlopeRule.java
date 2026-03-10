@@ -16,7 +16,7 @@ package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.hipparchus.stat.regression.SimpleRegression;
@@ -55,7 +55,7 @@ public class InSlopeRule extends RuleStream {
             Boolean allresult = null;
             long lastTimestamp = 0;
             for (var timeSeries: timeSeriesArray) {
-                if (timeSeries instanceof SingleTimeSeries ts && timeSeries.size() > 0) {
+                if (timeSeries instanceof DoubleTimeSeries ts && timeSeries.size() > 0) {
                     double slope = getSlope(ts);
 
                     lastTimestamp = timeSeries.timestamp();
@@ -83,7 +83,7 @@ public class InSlopeRule extends RuleStream {
         return this;
     }
 
-    private double getSlope(SingleTimeSeries series) {
+    private double getSlope(DoubleTimeSeries series) {
         regression.clear();
         for (int x = 0; x < series.size(); x++) {
             double doubleTimestamp = series.timestamps()[x];

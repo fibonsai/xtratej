@@ -76,7 +76,7 @@ public class StrategyManager {
                     strategy.onSubscribe(latch::countDown).subscribe(timeSeries -> {
                         var result = switch (timeSeries) {
                             case BooleanTimeSeries ts when ts.size() > 0 -> new BooleanTimeSeriesBuilder().add(ts.timestamp(), ts.values()[ts.size() - 1]).build();
-                            case BooleanTimeSeries bSingle -> bSingle;
+                            case BooleanTimeSeries booleanTimeSeries -> booleanTimeSeries;
                             default -> new BooleanTimeSeriesBuilder().add(0, false).build();
                         };
                         long timestamp;
