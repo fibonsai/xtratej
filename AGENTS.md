@@ -52,6 +52,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 
 ## Exploring the code
 
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'.
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using Fifo.
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Strategy.java` and @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
