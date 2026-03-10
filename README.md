@@ -60,16 +60,22 @@ publisher.subscribe(signal -> {
 Strategies can be loaded from a JSON file for better flexibility.
 
 ```java
+// 1. Load json
+
 ObjectMapper mapper = new ObjectMapper();
-JsonNode jsonNode = mapper.readTree(new File("strategies.json"));
-Map<String, IStrategy> strategies = Loader.fromJson(jsonNode);
+JsonNode json = mapper.readTree(new File("strategies.json"));
+
+// 2. Define strategyManager
 
 Publisher publisher = TargetType.SIMULATED.builder().setName("simulated").build();
-StrategyManager manager = new StrategyManager(tradingSignalConsumer).setPublisher(publisher);
-for (var strategy: strategies.values()) {
-    manager.registerStrategy(strategy);
-}
+StrategyManager manager = new StrategyManager().setPublisher(publisher);
 
+// 3. Register strategies from json
+
+Loader.fromJson(json).values()
+    .forEach(manager::registerStrategy);
+
+// 4. Execute StrategyManager 
 manager.run();
 
 // 5. Publisher send to external Trading signal consumer.
