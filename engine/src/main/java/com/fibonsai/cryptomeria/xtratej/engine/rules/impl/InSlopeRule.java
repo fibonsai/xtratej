@@ -85,9 +85,11 @@ public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
 
     private double getSlope(DoubleTimeSeries series) {
         regression.clear();
+        long[] timestamps = series.timestamps();
+        double[] values = series.values();
         for (int x = 0; x < series.size(); x++) {
-            double doubleTimestamp = series.timestamps()[x];
-            double value = series.values()[x];
+            double doubleTimestamp = timestamps[x];
+            double value = values[x];
             regression.addData(doubleTimestamp, value);
         }
         return regression.getSlope();
