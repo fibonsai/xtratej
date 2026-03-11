@@ -33,7 +33,7 @@ public record MyOrdersTimeSeries(
     double[] initialAmounts,
     double[] executedAmounts,
     OrderCondition[] orderConditions,
-    String[] orderConditionsRule
+    String[] orderConditionsRules
 ) implements TimeSeries {
 
     public enum TradeState {
