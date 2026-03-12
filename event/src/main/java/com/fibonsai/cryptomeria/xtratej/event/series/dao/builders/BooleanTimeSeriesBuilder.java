@@ -14,8 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.*;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -66,11 +65,32 @@ public class BooleanTimeSeriesBuilder extends TimeSeriesBuilder<BooleanTimeSerie
 
     @Override
     public BooleanTimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof BooleanTimeSeries(String id1, long[] timestamps, boolean[] values)) {
-            for (int x = 0; x < timestamps.length; x++) {
-                add(timestamps[x], values[x]);
-                if (id1 != null) setId(id1);
+        switch (timeSeries) {
+            case BooleanTimeSeries(String id1, long[] timestamps, boolean[] values) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x]);
+                    if (id1 != null) setId(id1);
+                }
             }
+            case DoubleTimeSeries(String id1, long[] timestamps, double[] values) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x] > 0.0);
+                    if (id1 != null) setId(id1);
+                }
+            }
+            case Double2TimeSeries(String id1, long[] timestamps, double[] values, double[] _) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x] > 0.0);
+                    if (id1 != null) setId(id1);
+                }
+            }
+            case BandTimeSeries(String id1, long[] timestamps, double[] uppers, double[] middles, double[] lowers) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], middles[x] < uppers[x] && middles[x] > lowers[x]);
+                    if (id1 != null) setId(id1);
+                }
+            }
+            default -> throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

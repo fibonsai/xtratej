@@ -14,8 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.*;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -66,11 +65,38 @@ public class DoubleTimeSeriesBuilder extends TimeSeriesBuilder<DoubleTimeSeriesB
 
     @Override
     public DoubleTimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof DoubleTimeSeries(String id1, long[] timestamps, double[] values)) {
-            for (int x = 0; x < timestamps.length; x++) {
-                add(timestamps[x], values[x]);
-                setId(id1);
+        switch (timeSeries) {
+            case DoubleTimeSeries(String id1, long[] timestamps, double[] values) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x]);
+                    setId(id1);
+                }
             }
+            case BarTimeSeries(String id1, long[] timestamps, double[] _, double[] _, double[] _, double[] closes, double[] _) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], closes[x]);
+                    setId(id1);
+                }
+            }
+            case BandTimeSeries(String id1, long[] timestamps, double[] uppers, double[] middles, double[] lowers) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], uppers[x] + middles[x] + lowers[x] / 3.0);
+                    setId(id1);
+                }
+            }
+            case BooleanTimeSeries(String id1, long[] timestamps, boolean[] values) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x] ? 1.0 : 0.0);
+                    setId(id1);
+                }
+            }
+            case Double2TimeSeries(String id1, long[] timestamps, double[] values, double[] _) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x]);
+                    setId(id1);
+                }
+            }
+            default -> throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

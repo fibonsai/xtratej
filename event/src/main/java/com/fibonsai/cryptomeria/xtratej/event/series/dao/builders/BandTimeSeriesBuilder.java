@@ -75,6 +75,8 @@ public class BandTimeSeriesBuilder extends TimeSeriesBuilder<BandTimeSeriesBuild
                 add(timestamps[x], u[x], m[x], l[x]);
                 setId(id1);
             }
+        } else {
+            throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

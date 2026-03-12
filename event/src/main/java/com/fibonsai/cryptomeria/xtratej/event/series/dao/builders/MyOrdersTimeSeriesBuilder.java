@@ -156,6 +156,8 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                     initialAmounts[x], executedAmounts[x], orderConditions[x], orderConditionRules[x]);
                 setId(id1);
             }
+        } else {
+            throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

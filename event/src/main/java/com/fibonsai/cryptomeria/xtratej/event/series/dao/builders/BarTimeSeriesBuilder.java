@@ -15,6 +15,8 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.Double2TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.Arrays;
@@ -74,11 +76,26 @@ public class BarTimeSeriesBuilder extends TimeSeriesBuilder<BarTimeSeriesBuilder
 
     @Override
     public BarTimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof BarTimeSeries(String id1, long[] timestamps, double[] o, double[] h, double[] l, double[] c, double[] v)) {
-            for (int x = 0; x < timestamps.length; x++) {
-                add(timestamps[x], o[x], h[x], l[x], c[x], v[x]);
-                setId(id1);
+        switch (timeSeries) {
+            case BarTimeSeries(String id1, long[] timestamps, double[] o, double[] h, double[] l, double[] c, double[] v) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], o[x], h[x], l[x], c[x], v[x]);
+                    setId(id1);
+                }
             }
+            case DoubleTimeSeries(String id1, long[]timestamps, double[] values) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x], values[x], values[x], values[x], 1.0);
+                    setId(id1);
+                }
+            }
+            case Double2TimeSeries(String id1, long[]timestamps, double[] values, double[] values2) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x], values[x], values[x], values[x], values2[x]);
+                    setId(id1);
+                }
+            }
+            default -> throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

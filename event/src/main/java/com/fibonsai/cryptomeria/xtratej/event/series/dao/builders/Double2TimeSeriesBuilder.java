@@ -14,7 +14,9 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.Double2TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.Arrays;
@@ -68,11 +70,26 @@ public class Double2TimeSeriesBuilder extends TimeSeriesBuilder<Double2TimeSerie
 
     @Override
     public Double2TimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof Double2TimeSeries(String id1, long[] timestamps, double[] values, double[] values2)) {
-            for (int x = 0; x < timestamps.length; x++) {
-                add(timestamps[x], values[x], values2[x]);
-                setId(id1);
+        switch (timeSeries) {
+            case Double2TimeSeries(String id1, long[] timestamps, double[] values, double[] values2) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x], values2[x]);
+                    setId(id1);
+                }
             }
+            case DoubleTimeSeries(String id1, long[] timestamps, double[] values) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], values[x], values[x]);
+                    setId(id1);
+                }
+            }
+            case BarTimeSeries(String id1, long[] timestamps, double[] _, double[] _, double[] _, double[] closes, double[] volumes) -> {
+                for (int x = 0; x < timestamps.length; x++) {
+                    add(timestamps[x], closes[x], volumes[x]);
+                    setId(id1);
+                }
+            }
+            default -> throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

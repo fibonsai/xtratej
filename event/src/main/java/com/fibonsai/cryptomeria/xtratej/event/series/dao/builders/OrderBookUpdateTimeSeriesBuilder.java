@@ -107,6 +107,8 @@ public class OrderBookUpdateTimeSeriesBuilder extends TimeSeriesBuilder<OrderBoo
                 add(timestamps[x], bidOrderIds[x], askOrderIds[x], bidPrices[x], askPrices[x], bidAmounts[x], askAmounts[x], spreads[x]);
                 setId(id1);
             }
+        } else {
+            throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }

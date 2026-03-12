@@ -129,6 +129,8 @@ public class BalanceUpdateTimeSeriesBuilder extends TimeSeriesBuilder<BalanceUpd
                 add(timestamps[x], symbols[x], owners[x], updateCauses[x], totals[x], availables[x], frozens[x], borroweds[x], loaneds[x], withdrawings[x], depositings[x], scales[x]);
                 setId(id1);
             }
+        } else {
+            throw new UnsupportedOperationException("%s not supported".formatted(timeSeries.getClass().getSimpleName()));
         }
         return this;
     }
