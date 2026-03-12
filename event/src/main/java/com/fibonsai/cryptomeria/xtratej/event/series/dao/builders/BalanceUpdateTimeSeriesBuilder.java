@@ -53,17 +53,19 @@ public class BalanceUpdateTimeSeriesBuilder extends TimeSeriesBuilder<BalanceUpd
 
         writeLock.lock();
         try {
+            Element element = new Element(timestamp, symbol, owner, updateCause, total, available, frozen, borrowed, loaned, withdrawing, depositing, scale);
             if (elements.length >= maxSize) {
                 Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
-                this.elements[0] = new Element(timestamp, symbol, owner, updateCause, total, available, frozen, borrowed, loaned, withdrawing, depositing, scale);
+                this.elements[0] = element;
             } else {
                 Element[] newElements = new Element[elements.length + 1];
                 System.arraycopy(elements, 0, newElements, 0, elements.length);
-                newElements[elements.length] = new Element(timestamp, symbol, owner, updateCause, total, available, frozen, borrowed, loaned, withdrawing, depositing, scale);
+                newElements[elements.length] = element;
                 this.elements = newElements;
             }
         } finally {
             writeLock.unlock();
+
         }
         return this;
     }

@@ -29,13 +29,14 @@ public class Double2TimeSeriesBuilder extends TimeSeriesBuilder<Double2TimeSerie
     public Double2TimeSeriesBuilder add(long timestamp, double value, double value2) {
         writeLock.lock();
         try {
+            Element element = new Element(timestamp, value, value2);
             if (elements.length >= maxSize) {
                 Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
-                this.elements[0] = new Element(timestamp, value, value2);
+                this.elements[0] = element;
             } else {
                 Element[] _elements = new Element[elements.length + 1];
                 System.arraycopy(elements, 0, _elements, 0, elements.length);
-                _elements[elements.length] = new Element(timestamp, value, value2);
+                _elements[elements.length] = element;
                 this.elements = _elements;
             }
         } finally {

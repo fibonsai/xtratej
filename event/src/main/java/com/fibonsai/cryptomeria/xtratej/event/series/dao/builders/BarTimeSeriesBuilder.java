@@ -29,13 +29,14 @@ public class BarTimeSeriesBuilder extends TimeSeriesBuilder<BarTimeSeriesBuilder
     public BarTimeSeriesBuilder add(long timestamp, double open, double high, double low, double close, double volume) {
         writeLock.lock();
         try {
+            Element element = new Element(timestamp, open, high, low, close, volume);
             if (elements.length >= maxSize) {
                 Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
-                this.elements[0] = new Element(timestamp, open, high, low, close, volume);
+                this.elements[0] = element;
             } else {
                 Element[] _elements = new Element[elements.length + 1];
                 System.arraycopy(elements, 0, _elements, 0, elements.length);
-                _elements[elements.length] = new Element(timestamp, open, high, low, close, volume);
+                _elements[elements.length] = element;
                 this.elements = _elements;
             }
         } finally {

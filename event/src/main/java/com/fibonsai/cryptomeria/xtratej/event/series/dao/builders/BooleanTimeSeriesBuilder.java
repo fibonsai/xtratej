@@ -29,13 +29,14 @@ public class BooleanTimeSeriesBuilder extends TimeSeriesBuilder<BooleanTimeSerie
     public BooleanTimeSeriesBuilder add(long timestamp, boolean value) {
         writeLock.lock();
         try {
+            Element element = new Element(timestamp, value);
             if (elements.length >= maxSize) {
                 Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
-                this.elements[0] = new Element(timestamp, value);
+                this.elements[0] = element;
             } else {
                 Element[] _elements = new Element[elements.length + 1];
                 System.arraycopy(elements, 0, _elements, 0, elements.length);
-                _elements[elements.length] = new Element(timestamp, value);
+                _elements[elements.length] = element;
                 this.elements = _elements;
             }
         } finally {

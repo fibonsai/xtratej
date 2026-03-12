@@ -29,13 +29,14 @@ public class BandTimeSeriesBuilder extends TimeSeriesBuilder<BandTimeSeriesBuild
     public BandTimeSeriesBuilder add(long timestamp, double upper, double middle, double lower) {
         writeLock.lock();
         try {
+            Element element = new Element(timestamp, upper, middle, lower);
             if (elements.length >= maxSize) {
                 Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
-                this.elements[0] = new Element(timestamp, upper, middle, lower);
+                this.elements[0] = element;
             } else {
                 Element[] newElements = new Element[elements.length + 1];
                 System.arraycopy(elements, 0, newElements, 0, elements.length);
-                newElements[elements.length] = new Element(timestamp, upper, middle, lower);
+                newElements[elements.length] = element;
                 this.elements = newElements;
             }
         } finally {

@@ -15,7 +15,6 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.OrderCondition;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.OrderType;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
@@ -64,17 +63,16 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
 
         writeLock.lock();
         try {
-            if (elements.length >= maxSize) {
-                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
-                this.elements[0] = new Element(timestamp, orderId, symbol, owner, tradeState, orderType,
+            Element element = new Element(timestamp, orderId, symbol, owner, tradeState, orderType,
                     fee, price, limitPrice, stopPrice, takeProfitPrice, trailingPrice,
                     initialAmount, executedAmount, orderCondition, orderConditionRule);
+            if (elements.length >= maxSize) {
+                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+                this.elements[0] = element;
             } else {
                 Element[] newElements = new Element[elements.length + 1];
                 System.arraycopy(elements, 0, newElements, 0, elements.length);
-                newElements[elements.length] = new Element(timestamp, orderId, symbol, owner, tradeState, orderType,
-                    fee, price, limitPrice, stopPrice, takeProfitPrice, trailingPrice,
-                    initialAmount, executedAmount, orderCondition, orderConditionRule);
+                newElements[elements.length] = element;
                 this.elements = newElements;
             }
         } finally {
