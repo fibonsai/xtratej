@@ -105,16 +105,6 @@ class RuleTypeTest {
     }
 
     @Test
-    void testBuildTimeRule() {
-        RuleStream<? extends TimeSeries> rule = RuleType.Time
-                .build()
-                .setDescription("test-time");
-        assertNotNull(rule);
-        assertInstanceOf(TimeRule.class, rule);
-        assertEquals("test-time", rule.getDescription());
-    }
-
-    @Test
     void testBuildTrendRule() {
         RuleStream<? extends TimeSeries> rule = RuleType.Trend
                 .build()

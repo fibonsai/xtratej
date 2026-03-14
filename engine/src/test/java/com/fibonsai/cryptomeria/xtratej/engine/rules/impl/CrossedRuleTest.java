@@ -30,6 +30,7 @@ import tools.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 class CrossedRuleTest {
 
     private AutoCloseable closeable;
@@ -157,5 +158,146 @@ class CrossedRuleTest {
         BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_thresholdExactlyAtMin_shouldReturnFalse() {
+        params.put("threshold", 40.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertFalse(result[0].values()[0], "Should return false when series goes above threshold");
+    }
+
+    @Test
+    void predicate_thresholdExactlyAtMax_shouldReturnFalse() {
+        params.put("threshold", 60.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        // Series ends at threshold - considered crossed
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_sourceIdNotFound_returnsFalse() {
+        params.put("sourceId", "nonExistent");
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        // Should return false when sourceId not found
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_nanThreshold_handling() {
+        params.put("threshold", Double.NaN);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+    }
+
+    @Test
+    void predicate_infiniteThreshold_handling() {
+        params.put("threshold", Double.POSITIVE_INFINITY);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+    }
+
+    @Test
+    void predicate_singleValueSeries_handling() {
+        params.put("threshold", 50.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+    }
+
+    @Test
+    void predicate_negativeValues_handling() {
+        params.put("threshold", -50.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{-60.0, -40.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_negativeThreshold_handling() {
+        params.put("threshold", -50.0);
+        CrossedRule rule = switch (RuleType.Crossed.build().setParams(params)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
     }
 }

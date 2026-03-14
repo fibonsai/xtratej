@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 class WeekdayRuleTest {
 
     private AutoCloseable closeable;
@@ -116,5 +117,158 @@ class WeekdayRuleTest {
         BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_multipleWeekdays_shouldReturnTrue() {
+        String today = LocalDateTime.now().getDayOfWeek().name();
+        String tomorrow = LocalDateTime.now().plusDays(1).getDayOfWeek().name();
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode()
+                .add(today.toLowerCase())
+                .add(tomorrow.toLowerCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_allWeekdays_shouldReturnTrue() {
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode()
+                .add("monday")
+                .add("tuesday")
+                .add("wednesday")
+                .add("thursday")
+                .add("friday")
+                .add("saturday")
+                .add("sunday"));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_weekendOnly_todayIsWeekend_shouldReturnTrue() {
+        String today = LocalDateTime.now().getDayOfWeek().name();
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add(today.toLowerCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_weekendOnly_todayIsNotWeekend_shouldReturnFalse() {
+        String today = LocalDateTime.now().getDayOfWeek().name();
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add("saturday").add("sunday"));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        // If today is weekend, it should return true; otherwise false
+        boolean isWeekend = today.equalsIgnoreCase("saturday") || today.equalsIgnoreCase("sunday");
+        assertEquals(isWeekend, result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_uppercaseWeekday_shouldMatch() {
+        String today = LocalDateTime.now().getDayOfWeek().name();
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add(today.toUpperCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_invalidWeekday_ignoresIt() {
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add("invalidday"));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        // Invalid weekday should result in false (no match)
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_notActivated_returnsEmpty() {
+        WeekdayRule inactiveRule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = inactiveRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_withSingleDayArray() {
+        String today = LocalDateTime.now().getDayOfWeek().name();
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode().add(today.toLowerCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_mixedCaseWeekdays() {
+        String today = LocalDateTime.now().getDayOfWeek().name();
+        params.set("weekdays", JsonNodeFactory.instance.arrayNode()
+                .add(today.substring(0, 1).toUpperCase() + today.substring(1).toLowerCase()));
+        WeekdayRule rule = switch (RuleType.Weekday.build().setParams(params)) {
+            case WeekdayRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertTrue(result[0].values()[0]);
     }
 }

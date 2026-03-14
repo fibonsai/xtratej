@@ -20,6 +20,7 @@ import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import tools.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 class TrendRuleTest {
 
     private AutoCloseable closeable;
@@ -150,5 +152,173 @@ class TrendRuleTest {
         BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_sourceIdNotInSources_returnsFalse() {
+        params.put("sourceId", "nonExistent");
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_emptySeries_handling() {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries emptySeries = createDoubleTimeSeries("s1", new long[]{}, new double[]{});
+        TimeSeries[] input = new TimeSeries[]{emptySeries};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_singleValueSeries_handling() {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1}, new double[]{50.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_identicalValues_zeroSlope() {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3, 4}, new double[]{50.0, 50.0, 50.0, 50.0});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        // Zero slope is not > 0, so should return false for rising
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_negativeSlope_withIsRisingFalse() {
+        params.put("isRising", false);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_multipleSeries_withSourceId() {
+        params.put("sourceId", "s2");
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries s1 = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Rising
+        TimeSeries s2 = createDoubleTimeSeries("s2", new long[]{1, 2, 3}, new double[]{1, 1.5, 2}); // Rising but lower
+        TimeSeries s3 = createDoubleTimeSeries("s3", new long[]{1, 2, 3}, new double[]{1, 1.2, 1.4}); // Rising less
+        TimeSeries[] input = new TimeSeries[]{s1, s2, s3};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_negativeValues_handling() {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{-3, -2, -1});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_verySmallSlope_handling() {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{0.0, 0.000001, 0.000002});
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withNonDoubleSeries_ignoresThem() {
+        params.put("isRising", true);
+        TrendRule rule = switch (RuleType.Trend.build().setParams(params)) {
+            case TrendRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.watch(new Fifo<>());
+
+        // Boolean series should be ignored
+        TimeSeries booleanSeries = new BooleanTimeSeriesBuilder().setId("s1").add(1, true).add(2, false).build();
+        TimeSeries[] input = new TimeSeries[]{booleanSeries};
+
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
     }
 }
