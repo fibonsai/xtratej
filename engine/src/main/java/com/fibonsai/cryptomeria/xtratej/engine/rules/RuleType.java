@@ -29,7 +29,6 @@ public enum RuleType {
     Not(NotRule::new),
     Or(OrRule::new),
     Random(RandomRule::new),
-    Time(TimeRule::new),
     Trend(TrendRule::new),
     Weekday(WeekdayRule::new),
     XOr(XOrRule::new)
