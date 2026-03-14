@@ -19,6 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -116,5 +117,102 @@ class XOrRuleTest {
 
         assertEquals(1, result.length);
         assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withFourTrue_shouldReturnFalse() {
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true); // init with true
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true); // true ^ true = false
+        TimeSeries series3 = createBooleanSeries("s3", 102L, true); // false ^ true = true
+        TimeSeries series4 = createBooleanSeries("s4", 103L, true); // true ^ true = false
+        TimeSeries[] input = new TimeSeries[]{series1, series2, series3, series4};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withOddTrueEvenCount_shouldReturnTrue() {
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true); // init with true
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true); // true ^ true = false
+        TimeSeries series3 = createBooleanSeries("s3", 102L, true); // false ^ true = true
+        TimeSeries series4 = createBooleanSeries("s4", 103L, false); // true ^ false = true
+        TimeSeries[] input = new TimeSeries[]{series1, series2, series3, series4};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withEvenTrueEvenCount_shouldReturnFalse() {
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true); // init with true
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true); // true ^ true = false
+        TimeSeries series3 = createBooleanSeries("s3", 102L, false); // false ^ false = false
+        TimeSeries series4 = createBooleanSeries("s4", 103L, false); // false ^ false = false
+        TimeSeries[] input = new TimeSeries[]{series1, series2, series3, series4};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withNonBooleanTimeSeries_ignoresThem() {
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries series2 = new DoubleTimeSeriesBuilder().setId("s2").add(101L, 50.0).build();
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withAllNonBoolean_returnsEmpty() {
+        TimeSeries series1 = new DoubleTimeSeriesBuilder().setId("s1").add(100L, 50.0).build();
+        TimeSeries series2 = new DoubleTimeSeriesBuilder().setId("s2").add(101L, 60.0).build();
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withNullValueInArray_handling() {
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries[] input = new TimeSeries[]{series1, null};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withEmptyArrayHandling() {
+        TimeSeries[] input = new TimeSeries[]{};
+
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_notActivated_returnsEmpty() {
+        XOrRule inactiveRule = new XOrRule();
+        TimeSeries series = createBooleanSeries("s1", 100L, true);
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = inactiveRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
     }
 }

@@ -103,4 +103,76 @@ class NotRuleTest {
 
         assertEquals(0, result.length);
     }
+
+    @Test
+    void predicate_withEmptyArrayHandling() {
+        TimeSeries[] input = new TimeSeries[]{};
+
+        BooleanTimeSeries[] result = notRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_withNullValueInArray_handling() {
+        TimeSeries series = createBooleanSeries("s1", 100L, true);
+        TimeSeries[] input = new TimeSeries[]{series, null};
+
+        BooleanTimeSeries[] result = notRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_withMultipleBooleanValues() {
+        BooleanTimeSeries series = createBooleanSeries("s1", 100L, true, false, true);
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = notRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+    }
+
+    @Test
+    void predicate_notActivated_returnsEmpty() {
+        NotRule inactiveRule = new NotRule();
+        TimeSeries series = createBooleanSeries("s1", 100L, true);
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = inactiveRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_emptyValuesArray_handling() {
+        BooleanTimeSeries series = new BooleanTimeSeriesBuilder().setId("s1").build();
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = notRule.predicate().apply(input);
+
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    void predicate_withSingleFalseValue() {
+        BooleanTimeSeries series = createBooleanSeries("s1", 100L, false);
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = notRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertTrue(result[0].values()[0]);
+    }
+
+    @Test
+    void predicate_withSingleTrueValue() {
+        BooleanTimeSeries series = createBooleanSeries("s1", 100L, true);
+        TimeSeries[] input = new TimeSeries[]{series};
+
+        BooleanTimeSeries[] result = notRule.predicate().apply(input);
+
+        assertEquals(1, result.length);
+        assertFalse(result[0].values()[0]);
+    }
 }
