@@ -15,6 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.OrderCondition;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.OrderType;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
@@ -28,6 +29,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
     private record Element(long timestamp,
                            String orderId,
                            String symbol,
+                           BidAskSide side,
                            String owner,
                            TradeState tradeState,
                            OrderType orderType,
@@ -47,6 +49,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
     public MyOrdersTimeSeriesBuilder add(long timestamp,
                                          String orderId,
                                          String symbol,
+                                         BidAskSide side,
                                          String owner,
                                          TradeState tradeState,
                                          OrderType orderType,
@@ -63,7 +66,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
 
         writeLock.lock();
         try {
-            Element element = new Element(timestamp, orderId, symbol, owner, tradeState, orderType,
+            Element element = new Element(timestamp, orderId, symbol, side, owner, tradeState, orderType,
                     fee, price, limitPrice, stopPrice, takeProfitPrice, trailingPrice,
                     initialAmount, executedAmount, orderCondition, orderConditionRule);
             if (elements.length >= maxSize) {
@@ -88,6 +91,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
             long[] _timestamps = new long[elements.length];
             String[] _orderIds = new String[elements.length];
             String[] _symbols = new String[elements.length];
+            BidAskSide[] _sides = new BidAskSide[elements.length];
             String[] _owners = new String[elements.length];
             TradeState[] _tradeStates = new TradeState[elements.length];
             OrderType[] _orderTypes = new OrderType[elements.length];
@@ -107,6 +111,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                 _timestamps[count] = element.timestamp();
                 _orderIds[count] = element.orderId();
                 _symbols[count] = element.symbol();
+                _sides[count] = element.side();
                 _owners[count] = element.owner();
                 _tradeStates[count] = element.tradeState();
                 _orderTypes[count] = element.orderType();
@@ -122,10 +127,10 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                 _orderConditionRules[count] = element.orderConditionRule();
                 count++;
             }
-            return new MyOrdersTimeSeries(id, _timestamps, _orderIds, _symbols, _owners,
-                _tradeStates, _orderTypes, _fees, _prices, _limitPrices, _stopPrices,
-                _takeProfitPrices, _trailingPrices, _initialAmounts, _executedAmounts,
-                _orderConditions, _orderConditionRules);
+            return new MyOrdersTimeSeries(id, _timestamps, _orderIds, _symbols, _sides,
+                    _owners, _tradeStates, _orderTypes, _fees, _prices, _limitPrices,
+                    _stopPrices, _takeProfitPrices, _trailingPrices, _initialAmounts,
+                    _executedAmounts, _orderConditions, _orderConditionRules);
         } finally {
             readLock.unlock();
         }
@@ -137,6 +142,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
             long[] timestamps,
             String[] orderIds,
             String[] symbols,
+            BidAskSide[] sides,
             String[] owners,
             TradeState[] tradeStates,
             OrderType[] orderTypes,
@@ -151,7 +157,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
             OrderCondition[] orderConditions,
             String[] orderConditionRules)) {
             for (int x = 0; x < timestamps.length; x++) {
-                add(timestamps[x], orderIds[x], symbols[x], owners[x], tradeStates[x], orderTypes[x],
+                add(timestamps[x], orderIds[x], symbols[x], sides[x], owners[x], tradeStates[x], orderTypes[x],
                     fees[x], prices[x], limitPrices[x], stopPrices[x], takeProfitPrices[x], trailingPrices[x],
                     initialAmounts[x], executedAmounts[x], orderConditions[x], orderConditionRules[x]);
                 setId(id1);

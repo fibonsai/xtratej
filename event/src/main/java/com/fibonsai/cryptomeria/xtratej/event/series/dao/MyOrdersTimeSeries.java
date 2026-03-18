@@ -21,6 +21,7 @@ public record MyOrdersTimeSeries(
     long[] timestamps,
     String[] orderIds,
     String[] symbols,
+    BidAskSide[] sides,
     String[] owners,
     TradeState[] tradeStates,
     OrderType[] orderTypes,
