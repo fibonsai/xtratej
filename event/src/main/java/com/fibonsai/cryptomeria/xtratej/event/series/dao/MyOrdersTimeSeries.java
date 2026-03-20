@@ -37,6 +37,8 @@ public record MyOrdersTimeSeries(
     String[] orderConditionsRules
 ) implements TimeSeries {
 
+    public static final double MINIMUM_AMOUNT_ALLOWED = Math.pow(10, -12);
+
     public enum TradeState {
         PENDING_NEW,
         NEW,

@@ -20,6 +20,7 @@ import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.Orde
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.OrderType;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,10 +42,29 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                            double trailingPrice,
                            double initialAmount,
                            double executedAmount,
-                           OrderCondition orderCondition,
-                           String orderConditionRule) {}
+                           @Nullable OrderCondition orderCondition,
+                           @Nullable String orderConditionRule) {
+
+        private Element {
+            if (orderCondition == null) orderCondition = OrderCondition.GOOD_TIL_CANCELED;
+        }
+    }
 
     private Element[] elements = new Element[0];
+
+    // tests only
+    public MyOrdersTimeSeriesBuilder add(long timestamp,
+                                         String orderId,
+                                         BidAskSide side,
+                                         TradeState tradeState,
+                                         double price,
+                                         double initialAmount,
+                                         double executedAmount) {
+
+        return add(timestamp, orderId, "SYMBOL", side, "OWNER", tradeState, OrderType.MARKET, 0.0,
+                price, Double.NaN, Double.NaN, Double.NaN, Double.NaN, initialAmount, executedAmount,
+                OrderCondition.GOOD_TIL_CANCELED, "");
+    }
 
     public MyOrdersTimeSeriesBuilder add(long timestamp,
                                          String orderId,
@@ -61,8 +81,8 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                                          double trailingPrice,
                                          double initialAmount,
                                          double executedAmount,
-                                         OrderCondition orderCondition,
-                                         String orderConditionRule) {
+                                         @Nullable OrderCondition orderCondition,
+                                         @Nullable String orderConditionRule) {
 
         writeLock.lock();
         try {

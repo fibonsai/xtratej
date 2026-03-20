@@ -21,14 +21,19 @@ import java.util.function.Supplier;
 
 public enum RuleType {
     And(AndRule::new),
+    ActiveOrder(ActiveOrderRule::new),
     Crossed(CrossedRule::new),
     DateTime(DateTimeRule::new),
     False(FalseRule::new),
+    GainLossRatio(GainLossRatioRule::new),
+    HasOpenPosition(HasOpenPositionRule::new),
     InSlope(InSlopeRule::new),
     Limit(LimitRule::new),
+    MaxDrawdown(MaxDrawdownRule::new),
     Not(NotRule::new),
     Or(OrRule::new),
     Random(RandomRule::new),
+    SharperRatio(SharperRatioRule::new),
     Trend(TrendRule::new),
     Weekday(WeekdayRule::new),
     XOr(XOrRule::new)
