@@ -25,6 +25,18 @@ public class BooleanTimeSeriesBuilder extends TimeSeriesBuilder<BooleanTimeSerie
 
     private Element[] elements = new Element[0];
 
+    public static BooleanTimeSeries trueTs(long timestamp) {
+        return new BooleanTimeSeriesBuilder().add(timestamp, true).build();
+    }
+
+    public static BooleanTimeSeries falseTs(long timestamp) {
+        return new BooleanTimeSeriesBuilder().add(timestamp, false).build();
+    }
+
+    public static BooleanTimeSeries[] toSingleArray(long timestamp, boolean bool) {
+        return new BooleanTimeSeries[]{ bool ? trueTs(timestamp) : falseTs(timestamp) };
+    }
+
     public BooleanTimeSeriesBuilder add(long timestamp, boolean value) {
         writeLock.lock();
         try {
