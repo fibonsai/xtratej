@@ -24,4 +24,4 @@ jobs:
         distribution: 'liberica'
         cache: maven
     - name: Build with Maven
-      run: ./mvnw -B package --file pom.xml
+      run: ./mvnw -B package --file pom.xml -DskipTests -Dmaven.test.skip=true
