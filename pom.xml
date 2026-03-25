@@ -28,7 +28,7 @@
 
     <artifactId>xtratej</artifactId>
     <groupId>com.fibonsai</groupId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 
     <description>Strategy engine from Fibonsai</description>
     <url>https://github.com/fibonsai/xtratej</url>
