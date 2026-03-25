@@ -16,59 +16,11 @@ package com.fibonsai.xtratej.adaptor.nats;
 
 import com.fibonsai.xtratej.adaptor.core.Subscriber;
 import com.fibonsai.xtratej.adaptor.core.WithParams;
-import com.fibonsai.xtratej.event.series.dao.*;
-import io.nats.client.*;
-import io.nats.client.impl.Headers;
-import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.fibonsai.xtratej.adaptor.nats.NatsSubscriber.NatsKey.*;
 
 public class NatsSubscriber extends Subscriber implements WithParams {
 
-    public static final List<Class<? extends TimeSeries>> CLASSES_SUPPORTED = List.of(DoubleTimeSeries.class, BarTimeSeries.class, BooleanTimeSeries.class);
-
-    public enum NatsKey {
-        NATS_CREDS("nats-creds"),
-        SERVERS("servers"),
-        MAX_RECONNECTS("max-reconnects"),
-        MAX_MESSAGES_INOUTGOING_QUEUE("max-messages-outgoing-queue"),
-        TOPICS("topics"),
-        ;
-
-        private final String key;
-
-        NatsKey(String key) {
-            this.key = key;
-        }
-
-        public String key() {
-            return key;
-        }
-    }
-
-    private static final Logger log = LoggerFactory.getLogger(NatsSubscriber.class);
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    private Options natsOptions = Options.builder().build();
-    private @Nullable Dispatcher dispatcher;
-    private @Nullable Connection connection;
-    private final List<String> topics = new ArrayList<>();
-    private final AtomicBoolean connected = new AtomicBoolean(false);
+    private final NatsClient natsClient = new NatsClient(this);
 
     public NatsSubscriber(String name, String publisher) {
         super(name, publisher);
@@ -76,110 +28,25 @@ public class NatsSubscriber extends Subscriber implements WithParams {
 
     @Override
     public Subscriber setParams(JsonNode params) {
-        String natsCreds = null;
-        Options.Builder natsOptionsBuilder = Options.builder();
-        for (var param: params) {
-            if (param.hasNonNull(NATS_CREDS.key()) && param.get(NATS_CREDS.key()).isString()) {
-                natsCreds = param.get(NATS_CREDS.key()).asString();
-            }
-            if (param.hasNonNull(SERVERS.key()) && param.get(SERVERS.key()).isArray()) {
-                for (var server: param.get(SERVERS.key())) {
-                    natsOptionsBuilder.server(server.asString());
-                }
-            }
-            if (param.hasNonNull(MAX_RECONNECTS.key()) && param.get(MAX_RECONNECTS.key()).isInt()) {
-                natsOptionsBuilder.maxReconnects(param.get(MAX_RECONNECTS.key()).asInt());
-            }
-            if (param.hasNonNull(MAX_MESSAGES_INOUTGOING_QUEUE.key()) && param.get(MAX_MESSAGES_INOUTGOING_QUEUE.key()).isInt()) {
-                natsOptionsBuilder.maxMessagesInOutgoingQueue(param.get(MAX_MESSAGES_INOUTGOING_QUEUE.key()).asInt());
-            }
-            if (param.hasNonNull(TOPICS.key()) && param.get(TOPICS.key()).isArray()) {
-                for (var topic: param.get(TOPICS.key())) {
-                    topics.add(topic.asString());
-                }
-            }
-        }
-        if (natsCreds == null) natsCreds = System.getenv("NATS_CREDS");
-        if (natsCreds != null) {
-            AuthHandler authHandler = Nats.credentials(natsCreds);
-            natsOptionsBuilder.authHandler(authHandler);
-        }
-
-        natsOptions = natsOptionsBuilder.build();
+        natsClient.setParams(params);
         return this;
     }
 
     @Override
     public boolean connect() {
-        try {
-            connection = Objects.requireNonNull(Nats.connectReconnectOnConnect(natsOptions));
-            dispatcher = connection.createDispatcher(handler());
-            boolean subscribed = topics.stream().map(dispatcher::subscribe).allMatch(Consumer::isActive);
-            connected.set(connection.getStatus() == Connection.Status.CONNECTED && dispatcher.isActive() && subscribed);
-        } catch (InterruptedException | IOException e) {
-            log.error(e.getMessage(), e);
-        } catch (NullPointerException e) {
-            log.error("not connected. aborting.");
+        if (natsClient.connect()) {
+            natsClient.subscribe();
         }
-        return connected.get();
-    }
-
-    private MessageHandler handler() {
-        return raw -> {
-            byte[] data = raw.getData();
-            Headers headers = raw.getHeaders();
-
-            TimeSeries timeSeries = decode(data, headers);
-
-            if (timeSeries != EmptyTimeSeries.INSTANCE) {
-                if (log.isDebugEnabled()) {
-                    log.debug(">>>>>>> [{}] SEND {}", timeSeries.timestamp(), timeSeries);
-                }
-                emitNext(timeSeries);
-            } else {
-                log.warn("header `class` NOT defined or its value IS NOT supported");
-            }
-        };
-    }
-
-    private static TimeSeries decode(byte[] data, @Nullable Headers headers) {
-        String msg = new String(data, StandardCharsets.UTF_8);
-        String className = headers != null ? headers.getFirst("class") : Object.class.getSimpleName();
-        TimeSeries timeSeries = null;
-
-        if (className != null) {
-            for (var clazz : CLASSES_SUPPORTED) {
-                if (clazz.getSimpleName().equals(className)) {
-                    timeSeries = decode(clazz, msg);
-                    break;
-                }
-            }
-        }
-
-        return timeSeries == null ? EmptyTimeSeries.INSTANCE : timeSeries;
-    }
-
-    private static TimeSeries decode(Class<? extends TimeSeries> clazz, String msg) {
-        return MAPPER.readValue(msg, clazz);
+        return natsClient.isSubscribed();
     }
 
     @Override
     public boolean disconnect() {
-        if (dispatcher != null && connection != null) {
-            try {
-                CompletableFuture<Boolean> drained = dispatcher.drain(Duration.ofSeconds(10));
-                drained.get();
-                connection.close();
-                connected.set(false);
-            } catch (InterruptedException|ExecutionException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        return !connected.get();
+        return natsClient.disconnect();
     }
 
     @Override
     public boolean isConnected() {
-        return connected.get();
+        return natsClient.isSubscribed();
     }
 }

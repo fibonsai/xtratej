@@ -130,13 +130,15 @@ public class StrategyTest {
         CountDownLatch exitLatch = new CountDownLatch(1);
         AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
         AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
-        publisher.subscribe(t -> {
-            if (t.signal() == TradingSignal.Signal.ENTER) {
-                enterTradingSignal.set(t);
-                enterLatch.countDown();
-            } else {
-                exitTradingSignal.set(t);
-                exitLatch.countDown();
+        publisher.subscribe(ts -> {
+            if (ts instanceof TradingSignal tradingSignal) {
+                if (tradingSignal.signal() == TradingSignal.Signal.ENTER) {
+                    enterTradingSignal.set(tradingSignal);
+                    enterLatch.countDown();
+                } else {
+                    exitTradingSignal.set(tradingSignal);
+                    exitLatch.countDown();
+                }
             }
         });
 
@@ -194,13 +196,15 @@ public class StrategyTest {
         CountDownLatch exitLatch = new CountDownLatch(1);
         AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
         AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
-        publisher.subscribe(t -> {
-            if (t.signal() == TradingSignal.Signal.ENTER) {
-                enterTradingSignal.set(t);
-                enterLatch.countDown();
-            } else {
-                exitTradingSignal.set(t);
-                exitLatch.countDown();
+        publisher.subscribe(ts -> {
+            if (ts instanceof TradingSignal tradingSignal) {
+                if (tradingSignal.signal() == TradingSignal.Signal.ENTER) {
+                    enterTradingSignal.set(tradingSignal);
+                    enterLatch.countDown();
+                } else {
+                    exitTradingSignal.set(tradingSignal);
+                    exitLatch.countDown();
+                }
             }
         });
 

@@ -15,7 +15,10 @@
 package com.fibonsai.xtratej.adaptor.core;
 
 public interface Adapter {
-    String name();
+    default String name() {
+        return "undef";
+    }
+
     boolean connect();
     boolean disconnect();
     boolean isConnected();

@@ -15,9 +15,9 @@
 package com.fibonsai.xtratej.adaptor.core;
 
 import com.fibonsai.directflux.DirectFlux;
-import com.fibonsai.xtratej.event.series.dao.TradingSignal;
+import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 
-public abstract class Publisher extends DirectFlux<TradingSignal> implements Adapter {
+public abstract class Publisher extends DirectFlux<TimeSeries> implements Adapter {
 
     private final String name;
 
