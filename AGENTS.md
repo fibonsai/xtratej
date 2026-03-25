@@ -4,14 +4,29 @@ This document provides instructions and context for AI agents working on the `xt
 
 ## Project Structure
 
-It's a maven project with two modules/subprojects:
+It's a maven project with four modules/subprojects and one exclusive e unified module/subproject to benchmarks:
 
+* **adapter**: Adapters separated by subprojects to connect to external sources. Implement Publisher and Subscriber actors.
 * **directflux**: Lightweight nearby real-time reactive engine, avoids external dependecies, complexity and heavy APIs.
 * **event**: data flow containers implementations supported by a simple, but "real-time" reactive approach.
-* **engine**: Rule/Strategy engine with external sources connectors.
+* **engine**: Rule/Strategy engine that uses Adapters to consume timeseries and to publish trading signals.
 * **benchmarks**: JMH (Java Microbenchmark Harness) benchmarks for critical paths in the xtratej codebase.
 
 IMPORTANT: **engine** module/subproject depends on **event** module/subproject. **event** depends on **directflux** module/subproject.
+
+### `adapter` structure
+
+*   **Common parent**: `adapter/pom.xml`
+*   **Adapter Core**: `adapter/adapter-core/src/main/java/com/fibonsai/xtratej/adapter/core`
+*   **Adapter Simulated**: `adapter/adapter-simulated/src/main/java/com/fibonsai/xtratej/adapter/simulated`
+*   **Adapter Simulated Tests**: `adapter/adapter-simulated/src/test/java/com/fibonsai/xtratej/adapter/simulated`
+*   **Adapter Nats**: `adapter/adapter-simulated/src/main/java/com/fibonsai/xtratej/adapter/simulated`
+*   **Adapter Nats Tests**: `adapter/adapter-simulated/src/test/java/com/fibonsai/xtratej/adapter/simulated`
+
+### `directflux` structure
+
+*   **Base Source**: `directflux/src/main/java/com/fibonsai/directflux`
+*   **Tests**: `directflux/src/test/java/com/fibonsai/directfluxt`
 
 ### `event` structure
 
