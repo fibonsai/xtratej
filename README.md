@@ -191,15 +191,20 @@ The `Loader` class expects a JSON structure as follows:
 
 ## Architecture
 
-There are two modules/subprojects:
+There are four modules/subprojects:
+* **adapter**: Adapters separated by subprojects to connect to external sources. Implement Publisher and Subscriber actors.
+  *   **adapter-simulated**: Nops Adapter to simple simulations.
+  *   **adapter-nats**: Adapter to NATS service, supporting **Publisher** and **Subscriber**.
+
+* **directflux**: Lightweight nearby real-time reactive engine, avoids external dependecies, complexity and heavy APIs.
+  *   **DirectFlux**: The underlying reactive pipe connecting components
+
 * **event**: data flow containers implementations supported by a simple, but "real-time" reactive approach.
   *   **TimeSeries**: Optimized storage for temporal data points (prices, signals).
-  *   **Fifo**: The underlying reactive pipe connecting components.
   
 * **engine**: Rule/Strategy engine with external sources connectors.
   *   **Strategy**: The central coordinator that manages lifecycle and data flow.
   *   **RuleStream**: Abstract base for all logic components. Rules process inputs and emit `BooleanSingleTimeSeries` results.
-  *   **Subscriber**: Entity to subscribe external data sources.
 
 ## Requirements
 
