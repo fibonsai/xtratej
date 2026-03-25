@@ -20,7 +20,7 @@
 
     <groupId>com.fibonsai</groupId>
     <artifactId>directflux</artifactId>
-    <version>1.2.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
