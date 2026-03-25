@@ -15,9 +15,10 @@
 package com.fibonsai.xtratej.engine.sources;
 
 import com.fibonsai.directflux.DirectFlux;
+import com.fibonsai.xtratej.engine.Adapter;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 
-public abstract class Subscriber extends DirectFlux<TimeSeries> {
+public abstract class Subscriber extends DirectFlux<TimeSeries> implements Adapter {
     private final String name;
     private final String publisher;
 

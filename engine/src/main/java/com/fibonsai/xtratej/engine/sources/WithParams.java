@@ -14,8 +14,9 @@
 
 package com.fibonsai.xtratej.engine.sources;
 
+import com.fibonsai.xtratej.engine.Adapter;
 import tools.jackson.databind.JsonNode;
 
 public interface WithParams {
-    Subscriber setParams(JsonNode params);
+    Adapter setParams(JsonNode params);
 }
