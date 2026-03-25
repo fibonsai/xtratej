@@ -27,6 +27,13 @@
     <groupId>com.fibonsai.xtratej</groupId>
     <artifactId>adapter</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>adapter-core</module>
+        <module>adapter-nats</module>
+        <module>adapter-simulated</module>
+    </modules>
 
     <description>Inflow market data and private data</description>
     <url>https://github.com/fibonsai/xtratej</url>
