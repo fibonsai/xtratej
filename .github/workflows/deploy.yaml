@@ -21,7 +21,7 @@ jobs:
         distribution: 'liberica'
         cache: maven
     - name: Test Deploy (dry run)
-      run: mvn deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      run: mvn clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy
