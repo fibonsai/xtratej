@@ -14,7 +14,7 @@ This directory contains JMH (Java Microbenchmark Harness) benchmarks for critica
 ### Option 1: Run all benchmarks using the runner
 ```bash
 cd engine
-mvn exec:java -Dexec.mainClass="com.fibonsai.cryptomeria.xtratej.benchmarks.BenchmarkRunner"
+mvn exec:java -Dexec.mainClass="com.fibonsai.xtratej.benchmarks.BenchmarkRunner"
 ```
 
 ### Option 2: Run specific benchmark

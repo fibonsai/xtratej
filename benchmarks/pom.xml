@@ -19,12 +19,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.fibonsai.cryptomeria</groupId>
+        <groupId>com.fibonsai</groupId>
         <artifactId>xtratej</artifactId>
         <version>1.2.1</version>
     </parent>
 
-    <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
+    <groupId>com.fibonsai.xtratej</groupId>
     <artifactId>benchmarks</artifactId>
 
     <properties>
@@ -37,7 +37,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
+            <groupId>com.fibonsai.xtratej</groupId>
             <artifactId>engine</artifactId>
             <version>1.2.1</version>
         </dependency>

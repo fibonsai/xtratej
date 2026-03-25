@@ -18,12 +18,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.fibonsai.cryptomeria</groupId>
+        <groupId>com.fibonsai</groupId>
         <artifactId>xtratej</artifactId>
         <version>1.2.1</version>
     </parent>
 
-    <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
+    <groupId>com.fibonsai.xtratej</groupId>
     <artifactId>engine</artifactId>
 
     <properties>
@@ -34,7 +34,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
+            <groupId>com.fibonsai.xtratej</groupId>
             <artifactId>event</artifactId>
             <version>1.2.1</version>
         </dependency>

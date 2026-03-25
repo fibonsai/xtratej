@@ -15,22 +15,22 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject. 
 
 ### `event` structure
 
-*   **Base Source Code**: `event/src/main/java/com/fibonsai/cryptomeria/xtratej/event`
-*   **Tests**: `event/src/test/java/com/fibonsai/cryptomeria/xtratej/event`
+*   **Base Source Code**: `event/src/main/java/com/fibonsai/xtratej/event`
+*   **Tests**: `event/src/test/java/com/fibonsai/xtratej/event`
 
 ### `engine` structure
 
-*   **Base Source Code**: `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine`
-*   **Tests**: `engine/src/test/java/com/fibonsai/cryptomeria/xtratej/engine`
-*   **Rules**: `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/`
-*   **Strategy**: `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/`
-*   **External Sources**: `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/sources/`
+*   **Base Source Code**: `engine/src/main/java/com/fibonsai/xtratej/engine`
+*   **Tests**: `engine/src/test/java/com/fibonsai/xtratej/engine`
+*   **Rules**: `engine/src/main/java/com/fibonsai/xtratej/engine/rules/`
+*   **Strategy**: `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/`
+*   **External Sources**: `engine/src/main/java/com/fibonsai/xtratej/engine/sources/`
 
 
 ## Coding Standards
 
 1.  **Java Version**: The project uses Java 25. Ensure features compatible with this version are used correctly.
-2.  **Package Naming**: Follow the `com.fibonsai.cryptomeria.xtratej.*` convention.
+2.  **Package Naming**: Follow the `com.fibonsai.xtratej.*` convention.
 3.  **Copyright Headers**: All new files must include the standard file header found in existing files (e.g., `Strategy.java`).
 4.  **Logging**: Use SLF4J for logging.
     ```java
@@ -54,13 +54,13 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject. 
 
 ## Exploring the code
 
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'.
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using DirectFlux.
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Strategy.java` and @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/StrategyManager.java` to see how strategies are executed and how results are handled.
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Loader.java` to understand how the JSON configuration is parsed and how rules are wired to sources using DirectFlux.zip.
-* "Read `engine/src/test/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to see example usage and testing patterns for rules.
+* "Read `engine/src/main/java/com/fibonsai/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'.
+* "Read `engine/src/main/java/com/fibonsai/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
+* "Read `engine/src/main/java/com/fibonsai/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using DirectFlux.
+* "Read `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/Strategy.java` and @src/main/java/com/fibonsai/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
+* "Read `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/StrategyManager.java` to see how strategies are executed and how results are handled.
+* "Read `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/Loader.java` to understand how the JSON configuration is parsed and how rules are wired to sources using DirectFlux.zip.
+* "Read `engine/src/test/java/com/fibonsai/xtratej/engine/rules/impl/LimitRule.java` to see example usage and testing patterns for rules.
 
 ## Testing
 
