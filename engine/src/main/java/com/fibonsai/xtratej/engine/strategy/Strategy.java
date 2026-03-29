@@ -14,8 +14,8 @@
 
 package com.fibonsai.xtratej.engine.strategy;
 
-import com.fibonsai.xtratej.adaptor.core.Subscriber;
-import com.fibonsai.xtratej.adaptor.core.WithParams;
+import com.fibonsai.xtratej.adapter.core.Subscriber;
+import com.fibonsai.xtratej.adapter.core.WithParams;
 import com.fibonsai.xtratej.engine.adapters.SourceType;
 import com.fibonsai.xtratej.engine.rules.RuleStream;
 import com.fibonsai.xtratej.engine.rules.RuleType;

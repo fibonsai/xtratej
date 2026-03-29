@@ -12,11 +12,11 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.nats;
+package com.fibonsai.xtratej.adapter.nats;
 
 import com.fibonsai.directflux.DirectFlux;
-import com.fibonsai.xtratej.adaptor.core.Adapter;
-import com.fibonsai.xtratej.adaptor.core.WithParams;
+import com.fibonsai.xtratej.adapter.core.Adapter;
+import com.fibonsai.xtratej.adapter.core.WithParams;
 import com.fibonsai.xtratej.event.series.dao.*;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;
@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.fibonsai.xtratej.adaptor.nats.NatsClient.NatsKey.*;
+import static com.fibonsai.xtratej.adapter.nats.NatsClient.NatsKey.*;
 
 public class NatsClient implements Adapter, WithParams {
 

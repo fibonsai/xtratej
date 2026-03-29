@@ -12,7 +12,7 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.nats;
+package com.fibonsai.xtratej.adapter.nats;
 
 import com.fibonsai.xtratej.event.series.dao.TradingSignal;
 import com.fibonsai.xtratej.event.series.dao.TradingSignal.Signal;

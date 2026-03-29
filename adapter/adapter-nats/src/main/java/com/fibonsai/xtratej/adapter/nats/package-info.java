@@ -12,10 +12,7 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.core;
+@NullMarked
+package com.fibonsai.xtratej.adapter.nats;
 
-import tools.jackson.databind.JsonNode;
-
-public interface WithParams {
-    Adapter setParams(JsonNode params);
-}
+import org.jspecify.annotations.NullMarked;

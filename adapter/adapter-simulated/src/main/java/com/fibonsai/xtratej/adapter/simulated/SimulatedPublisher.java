@@ -12,9 +12,9 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.simulated;
+package com.fibonsai.xtratej.adapter.simulated;
 
-import com.fibonsai.xtratej.adaptor.core.Publisher;
+import com.fibonsai.xtratej.adapter.core.Publisher;
 
 public class SimulatedPublisher extends Publisher {
 

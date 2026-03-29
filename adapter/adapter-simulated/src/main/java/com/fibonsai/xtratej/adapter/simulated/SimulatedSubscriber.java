@@ -12,14 +12,28 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.core;
+package com.fibonsai.xtratej.adapter.simulated;
 
-public interface Adapter {
-    default String name() {
-        return "undef";
+import com.fibonsai.xtratej.adapter.core.Subscriber;
+
+public class SimulatedSubscriber extends Subscriber {
+
+    public SimulatedSubscriber(String name, String publisher) {
+        super(name, publisher);
     }
 
-    boolean connect();
-    boolean disconnect();
-    boolean isConnected();
+    @Override
+    public boolean connect() {
+        return true;
+    }
+
+    @Override
+    public boolean disconnect() {
+        return true;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return false;
+    }
 }

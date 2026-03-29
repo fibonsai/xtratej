@@ -12,28 +12,4 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.simulated;
-
-import com.fibonsai.xtratej.adaptor.core.Subscriber;
-
-public class SimulatedSubscriber extends Subscriber {
-
-    public SimulatedSubscriber(String name, String publisher) {
-        super(name, publisher);
-    }
-
-    @Override
-    public boolean connect() {
-        return true;
-    }
-
-    @Override
-    public boolean disconnect() {
-        return true;
-    }
-
-    @Override
-    public boolean isConnected() {
-        return false;
-    }
-}
+package com.fibonsai.xtratej.adapter.simulated;

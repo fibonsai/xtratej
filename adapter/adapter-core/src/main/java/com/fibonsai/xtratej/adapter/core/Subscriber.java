@@ -12,21 +12,26 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.core;
+package com.fibonsai.xtratej.adapter.core;
 
 import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 
-public abstract class Publisher extends DirectFlux<TimeSeries> implements Adapter {
-
+public abstract class Subscriber extends DirectFlux<TimeSeries> implements Adapter {
     private final String name;
+    private final String publisher;
 
-    public Publisher(String name) {
+    public Subscriber(String name, String publisher) {
         this.name = name;
+        this.publisher = publisher;
     }
 
     public String name() {
         return name;
+    }
+
+    public String publisher() {
+        return publisher;
     }
 
     public abstract boolean connect();

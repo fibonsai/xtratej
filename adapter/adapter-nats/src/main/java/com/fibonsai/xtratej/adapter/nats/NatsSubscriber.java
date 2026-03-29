@@ -12,10 +12,10 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.nats;
+package com.fibonsai.xtratej.adapter.nats;
 
-import com.fibonsai.xtratej.adaptor.core.Subscriber;
-import com.fibonsai.xtratej.adaptor.core.WithParams;
+import com.fibonsai.xtratej.adapter.core.Subscriber;
+import com.fibonsai.xtratej.adapter.core.WithParams;
 import tools.jackson.databind.JsonNode;
 
 public class NatsSubscriber extends Subscriber implements WithParams {

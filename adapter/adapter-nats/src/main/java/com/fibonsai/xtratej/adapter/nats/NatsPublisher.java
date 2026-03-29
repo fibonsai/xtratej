@@ -12,10 +12,10 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.nats;
+package com.fibonsai.xtratej.adapter.nats;
 
-import com.fibonsai.xtratej.adaptor.core.Publisher;
-import com.fibonsai.xtratej.adaptor.core.WithParams;
+import com.fibonsai.xtratej.adapter.core.Publisher;
+import com.fibonsai.xtratej.adapter.core.WithParams;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TradingSignal;
 import io.nats.client.impl.Headers;

@@ -12,4 +12,14 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adaptor.simulated;
+package com.fibonsai.xtratej.adapter.core;
+
+public interface Adapter {
+    default String name() {
+        return "undef";
+    }
+
+    boolean connect();
+    boolean disconnect();
+    boolean isConnected();
+}
