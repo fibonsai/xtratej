@@ -8,9 +8,15 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  build:
-
+  deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        subproject:
+          - directflux
+          - adapter
+          - engine
+          - event
 
     steps:
     - uses: actions/checkout@v4
@@ -21,10 +27,11 @@ jobs:
         distribution: 'liberica'
         cache: maven
     - name: Test Deploy (dry run)
-      run: mvn clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      run: mvn -pl ${{ matrix.subproject }} clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy
-      run: mvn deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      run: mvn -pl ${{ matrix.subproject }} deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
