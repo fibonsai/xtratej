@@ -54,6 +54,33 @@ jobs:
       continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Test Deploy Adapter Core subproject (dry run)
+      run: mvn -pl adapter/adapter-core clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Deploy Adapter Core subproject
+      run: mvn -pl adapter/adapter-core deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Test Deploy Adapter Simulated subproject (dry run)
+      run: mvn -pl adapter/adapter-simulated clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Deploy Adapter Simulated subproject
+      run: mvn -pl adapter/adapter-simulated deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Test Deploy Adapter Nats subproject (dry run)
+      run: mvn -pl adapter/adapter-nats clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Deploy Adapter Nats subproject
+      run: mvn -pl adapter/adapter-nats deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Test Deploy Engine subproject (dry run)
       run: mvn -pl engine clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
       env:
