@@ -47,7 +47,7 @@ public class MaxDrawdownRule extends RuleStream<BooleanTimeSeries> {
                 double low = Double.MAX_VALUE;
                 for (int x = 0; x < ts.size(); x++) {
                     double price = switch (ts) {
-                        case MyOrdersTimeSeries myOrders -> myOrders.prices()[x];
+                        case OrderTimeSeries myOrders -> myOrders.prices()[x];
                         case DoubleTimeSeries dts -> dts.values()[x];
                         case Double2TimeSeries dts -> dts.values()[x];
                         case BarTimeSeries barTs -> barTs.closes()[x];

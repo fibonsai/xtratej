@@ -16,15 +16,15 @@ package com.fibonsai.xtratej.engine.rules.impl;
 
 import com.fibonsai.xtratej.engine.rules.RuleStream;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 
 import java.util.function.Function;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.ASK;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.MINIMUM_AMOUNT_ALLOWED;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.ASK;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.MINIMUM_AMOUNT_ALLOWED;
 
 /***
  * this rule only supports MyOrderTimeSeries
@@ -39,7 +39,7 @@ public class HasOpenPositionRule extends RuleStream<BooleanTimeSeries> {
             BooleanTimeSeries[] results = new BooleanTimeSeries[timeSeriesArray.length];
             for (var ts: timeSeriesArray) {
                 if (ts.timestamp() > lastTimestamp) lastTimestamp = ts.timestamp();
-                if (ts instanceof MyOrdersTimeSeries myorders) {
+                if (ts instanceof OrderTimeSeries myorders) {
                     double remainAmount = getRemainAmount(myorders);
                     if (remainAmount < 0.0) {
                         results().emitError(new RuntimeException("Something is wrong. Selling more than you have."));
@@ -58,7 +58,7 @@ public class HasOpenPositionRule extends RuleStream<BooleanTimeSeries> {
         };
     }
 
-    private static double getRemainAmount(MyOrdersTimeSeries myorders) {
+    private static double getRemainAmount(OrderTimeSeries myorders) {
         double totalExecutedAmount = 0.0;
         double totalAmount = 0.0;
         double[] initialAmounts = myorders.initialAmounts();

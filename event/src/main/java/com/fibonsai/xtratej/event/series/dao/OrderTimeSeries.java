@@ -16,7 +16,7 @@ package com.fibonsai.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record MyOrdersTimeSeries(
+public record OrderTimeSeries(
     @Nullable String id,
     long[] timestamps,
     String[] orderIds,
@@ -84,7 +84,7 @@ public record MyOrdersTimeSeries(
         ORDER_TRIGGER_OTHER,
     }
 
-    public MyOrdersTimeSeries {
+    public OrderTimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");
     }
 }

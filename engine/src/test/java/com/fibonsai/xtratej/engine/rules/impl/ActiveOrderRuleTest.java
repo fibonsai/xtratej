@@ -18,17 +18,17 @@ import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.engine.rules.RuleType;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
-import com.fibonsai.xtratej.event.series.dao.builders.MyOrdersTimeSeriesBuilder;
+import com.fibonsai.xtratej.event.series.dao.builders.OrderTimeSeriesBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -56,7 +56,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_allActiveOrders() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .add(3000L, "order3", BID, TradeState.PARTIALLY_FILLED, 100.0, 1.0, 0.3)
@@ -80,7 +80,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_noActiveOrders() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", BID, TradeState.CANCELED, 100.0, 1.0, 0.0)
             .build();
@@ -102,7 +102,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_belowMinimum() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .build();
@@ -125,7 +125,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_aboveMaximum() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .add(3000L, "order3", BID, TradeState.PARTIALLY_FILLED, 100.0, 1.0, 0.3)
@@ -151,7 +151,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_atMinimum() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .add(3000L, "order3", BID, TradeState.PARTIALLY_FILLED, 100.0, 1.0, 0.3)
@@ -174,7 +174,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_atMaximum() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .add(3000L, "order3", BID, TradeState.PARTIALLY_FILLED, 100.0, 1.0, 0.3)
@@ -199,7 +199,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_mixedStates() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
@@ -225,7 +225,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_allActiveStates() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .add(3000L, "order3", BID, TradeState.PARTIALLY_FILLED, 100.0, 1.0, 0.3)
@@ -254,7 +254,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_inactiveStates() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", BID, TradeState.CANCELED, 100.0, 1.0, 0.0)
             .add(3000L, "order3", BID, TradeState.REJECTED, 100.0, 1.0, 0.0)
@@ -278,7 +278,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_noOrders() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id").build();
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id").build();
 
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
         rule.watch(new DirectFlux<>());
@@ -296,7 +296,7 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_defaultParams() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
         .build();
 
@@ -315,12 +315,12 @@ class ActiveOrderRuleTest {
      */
     @Test
     void predicate_multipleSeries() {
-        MyOrdersTimeSeries series1 = new MyOrdersTimeSeriesBuilder().setId("series1")
+        OrderTimeSeries series1 = new OrderTimeSeriesBuilder().setId("series1")
             .add(1000L, "order1", BID, TradeState.NEW, 100.0, 1.0, 0.0)
             .add(2000L, "order2", BID, TradeState.OPEN, 100.0, 1.0, 0.0)
             .build();
 
-        MyOrdersTimeSeries series2 = new MyOrdersTimeSeriesBuilder().setId("series2")
+        OrderTimeSeries series2 = new OrderTimeSeriesBuilder().setId("series2")
             .add(1500L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .build();
 

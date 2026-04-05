@@ -14,22 +14,22 @@
 
 package com.fibonsai.xtratej.event.series.dao.builders;
 
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.OrderCondition;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.OrderType;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.OrderCondition;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.OrderType;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import org.junit.jupiter.api.Test;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MyOrdersTimeSeriesBuilderTest {
+class OrderTimeSeriesBuilderTest {
 
     @Test
     void testAddSingleElement() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "test rule")
@@ -77,8 +77,8 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testAddMultipleElements() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "rule1")
@@ -107,7 +107,7 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testTimestampSorted() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder().setMaxSize(10).setId("myorders3");
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder().setMaxSize(10).setId("myorders3");
 
         // Add elements out of order
         builder.add(3000L, "order3", "BTC-USD", BID, "user1", TradeState.FILLED, OrderType.LIMIT,
@@ -120,7 +120,7 @@ class MyOrdersTimeSeriesBuilderTest {
             0.2, 3000.0, 3000.0, 0.0, 0.0, 0.0, 0.5, 0.25,
             OrderCondition.GOOD_TIL_CANCELED, "rule2");
 
-        MyOrdersTimeSeries timeSeries = builder.build();
+        OrderTimeSeries timeSeries = builder.build();
 
         long[] expectedTimestamps = {1000L, 2000L, 3000L};
         assertArrayEquals(expectedTimestamps, timeSeries.timestamps());
@@ -133,11 +133,11 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testMaxSizeOne() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder()
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder()
             .setId("myorders4")
             .setMaxSize(1);
 
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "rule1")
@@ -156,10 +156,10 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testSetMaxSize() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder()
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder()
             .setId("myorders5");
 
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeries timeSeries = builder
             .setMaxSize(2)
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
@@ -177,11 +177,11 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testOverwriteMaxSize() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder()
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder()
             .setMaxSize(3)
             .setId("myorders6");
 
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "rule1")
@@ -206,7 +206,7 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testEmptyBuilder() {
-        MyOrdersTimeSeries timeSeries = new MyOrdersTimeSeriesBuilder().build();
+        OrderTimeSeries timeSeries = new OrderTimeSeriesBuilder().build();
 
         assertEquals(0, timeSeries.size());
         assertEquals(0, timeSeries.timestamps().length);
@@ -230,8 +230,8 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testFromSameType() {
-        MyOrdersTimeSeriesBuilder builder1 = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries original = builder1
+        OrderTimeSeriesBuilder builder1 = new OrderTimeSeriesBuilder();
+        OrderTimeSeries original = builder1
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "test rule")
@@ -241,8 +241,8 @@ class MyOrdersTimeSeriesBuilderTest {
             .setId("original")
             .build();
 
-        MyOrdersTimeSeriesBuilder builder2 = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries copied = builder2.from(original).setId("copied").build();
+        OrderTimeSeriesBuilder builder2 = new OrderTimeSeriesBuilder();
+        OrderTimeSeries copied = builder2.from(original).setId("copied").build();
 
         assertEquals("copied", copied.id());
         assertEquals(2, copied.size());
@@ -266,23 +266,23 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testMergeMultiple() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
 
-        MyOrdersTimeSeries series1 = new MyOrdersTimeSeriesBuilder()
+        OrderTimeSeries series1 = new OrderTimeSeriesBuilder()
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "rule1")
             .setId("series1")
             .build();
 
-        MyOrdersTimeSeries series2 = new MyOrdersTimeSeriesBuilder()
+        OrderTimeSeries series2 = new OrderTimeSeriesBuilder()
             .add(2000L, "order2", "ETH-USD", BID, "user2", TradeState.PARTIALLY_FILLED, OrderType.MARKET,
                 0.2, 3000.0, 3000.0, 0.0, 0.0, 0.0, 0.5, 0.25,
                 OrderCondition.GOOD_TIL_CANCELED, "rule2")
             .setId("series2")
             .build();
 
-        MyOrdersTimeSeries merged = builder.merge(series1, series2).setId("merged").build();
+        OrderTimeSeries merged = builder.merge(series1, series2).setId("merged").build();
 
         assertEquals(2, merged.size());
         long[] expectedTimestamps = {1000L, 2000L};
@@ -293,8 +293,8 @@ class MyOrdersTimeSeriesBuilderTest {
     void testTradeStateValues() {
         // Test all TradeState enum values
         for (TradeState state : TradeState.values()) {
-            MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-            MyOrdersTimeSeries timeSeries = builder
+            OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+            OrderTimeSeries timeSeries = builder
                 .add(1000L, "order1", "BTC-USD", BID, "user1", state, OrderType.LIMIT,
                     0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                     OrderCondition.DAY, "test")
@@ -308,8 +308,8 @@ class MyOrdersTimeSeriesBuilderTest {
     void testOrderTypeValues() {
         // Test all OrderType enum values
         for (OrderType type : OrderType.values()) {
-            MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-            MyOrdersTimeSeries timeSeries = builder
+            OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+            OrderTimeSeries timeSeries = builder
                 .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, type,
                     0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                     OrderCondition.DAY, "test")
@@ -323,8 +323,8 @@ class MyOrdersTimeSeriesBuilderTest {
     void testOrderConditionValues() {
         // Test all OrderCondition enum values
         for (OrderCondition condition : OrderCondition.values()) {
-            MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-            MyOrdersTimeSeries timeSeries = builder
+            OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+            OrderTimeSeries timeSeries = builder
                 .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.LIMIT,
                     0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                     condition, "test rule")
@@ -336,8 +336,8 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testTrailingStopWithTrailValue() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.TRAILING_STOP,
                 0.0, 50000.0, 50000.0, 0.0, 0.0, 100.0, 1.0, 0.0,
                 OrderCondition.DAY, "trailing rule")
@@ -350,8 +350,8 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testStopLimitOrderWithStopPrice() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.NEW, OrderType.STOP,
                 0.0, 50000.0, 50000.0, 49500.0, 0.0, 0.0, 1.0, 0.0,
                 OrderCondition.DAY, "stop rule")
@@ -364,8 +364,8 @@ class MyOrdersTimeSeriesBuilderTest {
 
     @Test
     void testPartiallyFilledOrder() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder();
-        MyOrdersTimeSeries timeSeries = builder
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder();
+        OrderTimeSeries timeSeries = builder
             .add(1000L, "order1", "BTC-USD", BID, "user1", TradeState.PARTIALLY_FILLED, OrderType.LIMIT,
                 0.1, 50000.0, 50000.0, 0.0, 0.0, 0.0, 1.0, 0.5,
                 OrderCondition.DAY, "test")

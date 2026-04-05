@@ -14,18 +14,18 @@
 
 package com.fibonsai.xtratej.event.series.dao.builders;
 
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.OrderCondition;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.OrderType;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.OrderCondition;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.OrderType;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSeriesBuilder> {
+public class OrderTimeSeriesBuilder extends TimeSeriesBuilder<OrderTimeSeriesBuilder> {
 
     private record Element(long timestamp,
                            String orderId,
@@ -53,36 +53,36 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
     private Element[] elements = new Element[0];
 
     // tests only
-    public MyOrdersTimeSeriesBuilder add(long timestamp,
-                                         String orderId,
-                                         BidAskSide side,
-                                         TradeState tradeState,
-                                         double price,
-                                         double initialAmount,
-                                         double executedAmount) {
+    public OrderTimeSeriesBuilder add(long timestamp,
+                                      String orderId,
+                                      BidAskSide side,
+                                      TradeState tradeState,
+                                      double price,
+                                      double initialAmount,
+                                      double executedAmount) {
 
         return add(timestamp, orderId, "SYMBOL", side, "OWNER", tradeState, OrderType.MARKET, 0.0,
                 price, Double.NaN, Double.NaN, Double.NaN, Double.NaN, initialAmount, executedAmount,
                 OrderCondition.GOOD_TIL_CANCELED, "");
     }
 
-    public MyOrdersTimeSeriesBuilder add(long timestamp,
-                                         String orderId,
-                                         String symbol,
-                                         BidAskSide side,
-                                         String owner,
-                                         TradeState tradeState,
-                                         OrderType orderType,
-                                         double fee,
-                                         double price,
-                                         double limitPrice,
-                                         double stopPrice,
-                                         double takeProfitPrice,
-                                         double trailingPrice,
-                                         double initialAmount,
-                                         double executedAmount,
-                                         @Nullable OrderCondition orderCondition,
-                                         @Nullable String orderConditionRule) {
+    public OrderTimeSeriesBuilder add(long timestamp,
+                                      String orderId,
+                                      String symbol,
+                                      BidAskSide side,
+                                      String owner,
+                                      TradeState tradeState,
+                                      OrderType orderType,
+                                      double fee,
+                                      double price,
+                                      double limitPrice,
+                                      double stopPrice,
+                                      double takeProfitPrice,
+                                      double trailingPrice,
+                                      double initialAmount,
+                                      double executedAmount,
+                                      @Nullable OrderCondition orderCondition,
+                                      @Nullable String orderConditionRule) {
 
         if (fee < 0.0 || price < 0.0 || limitPrice < 0.0 || stopPrice < 0.0 || takeProfitPrice < 0.0 || trailingPrice < 0.0 || initialAmount < 0.0 || executedAmount < 0.0) {
             throw new RuntimeException("negative value is not allowed.");
@@ -109,7 +109,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
     }
 
     @Override
-    public MyOrdersTimeSeries build() {
+    public OrderTimeSeries build() {
         readLock.lock();
         try {
             long[] _timestamps = new long[elements.length];
@@ -151,7 +151,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                 _orderConditionRules[count] = element.orderConditionRule();
                 count++;
             }
-            return new MyOrdersTimeSeries(id, _timestamps, _orderIds, _symbols, _sides,
+            return new OrderTimeSeries(id, _timestamps, _orderIds, _symbols, _sides,
                     _owners, _tradeStates, _orderTypes, _fees, _prices, _limitPrices,
                     _stopPrices, _takeProfitPrices, _trailingPrices, _initialAmounts,
                     _executedAmounts, _orderConditions, _orderConditionRules);
@@ -161,25 +161,25 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
     }
 
     @Override
-    public MyOrdersTimeSeriesBuilder from(TimeSeries timeSeries) {
-        if (timeSeries instanceof MyOrdersTimeSeries(String id1,
-            long[] timestamps,
-            String[] orderIds,
-            String[] symbols,
-            BidAskSide[] sides,
-            String[] owners,
-            TradeState[] tradeStates,
-            OrderType[] orderTypes,
-            double[] fees,
-            double[] prices,
-            double[] limitPrices,
-            double[] stopPrices,
-            double[] takeProfitPrices,
-            double[] trailingPrices,
-            double[] initialAmounts,
-            double[] executedAmounts,
-            OrderCondition[] orderConditions,
-            String[] orderConditionRules)) {
+    public OrderTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof OrderTimeSeries(String id1,
+                                                  long[] timestamps,
+                                                  String[] orderIds,
+                                                  String[] symbols,
+                                                  BidAskSide[] sides,
+                                                  String[] owners,
+                                                  TradeState[] tradeStates,
+                                                  OrderType[] orderTypes,
+                                                  double[] fees,
+                                                  double[] prices,
+                                                  double[] limitPrices,
+                                                  double[] stopPrices,
+                                                  double[] takeProfitPrices,
+                                                  double[] trailingPrices,
+                                                  double[] initialAmounts,
+                                                  double[] executedAmounts,
+                                                  OrderCondition[] orderConditions,
+                                                  String[] orderConditionRules)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], orderIds[x], symbols[x], sides[x], owners[x], tradeStates[x], orderTypes[x],
                     fees[x], prices[x], limitPrices[x], stopPrices[x], takeProfitPrices[x], trailingPrices[x],
@@ -193,7 +193,7 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
     }
 
     @Override
-    public MyOrdersTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+    public OrderTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
         for (var timeSeries : timeSeriesArray) {
             from(timeSeries);
         }

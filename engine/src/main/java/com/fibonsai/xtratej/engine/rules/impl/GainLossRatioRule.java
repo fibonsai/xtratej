@@ -16,17 +16,17 @@ package com.fibonsai.xtratej.engine.rules.impl;
 
 import com.fibonsai.xtratej.engine.rules.RuleStream;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import tools.jackson.databind.JsonNode;
 
 import java.util.function.Function;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.ASK;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.MINIMUM_AMOUNT_ALLOWED;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.ASK;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.MINIMUM_AMOUNT_ALLOWED;
 
 /**
  * GainLossRatioRule calculates the ratio of winning trades to losing trades.
@@ -64,7 +64,7 @@ public class GainLossRatioRule extends RuleStream<BooleanTimeSeries> {
             BooleanTimeSeries[] results = new BooleanTimeSeries[timeSeriesArray.length];
             for (var ts: timeSeriesArray) {
                 if (ts.timestamp() > lastTimestamp) lastTimestamp = ts.timestamp();
-                if (ts instanceof MyOrdersTimeSeries myorders) {
+                if (ts instanceof OrderTimeSeries myorders) {
                     double result = Double.NaN;
                     double amountAccumulated = Double.NaN;
                     float gainCounter = 0.0F;

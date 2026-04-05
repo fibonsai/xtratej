@@ -18,19 +18,19 @@ import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.engine.rules.RuleType;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
-import com.fibonsai.xtratej.event.series.dao.builders.MyOrdersTimeSeriesBuilder;
+import com.fibonsai.xtratej.event.series.dao.builders.OrderTimeSeriesBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.ASK;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.MINIMUM_AMOUNT_ALLOWED;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.ASK;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.MINIMUM_AMOUNT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -57,7 +57,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_closedPosition_equalBuySell() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .build();
@@ -78,7 +78,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_openLongPosition() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", BID, TradeState.FILLED, 100.0, 0.5, 0.0)
             .add(3000L, "order3", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
@@ -103,7 +103,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_openShortPosition() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", ASK, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 100.0, 0.5, 0.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 80.0, 1.0, 1.0)
@@ -124,7 +124,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_positionCompletelyClosed() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 2.0, 2.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 2.0, 2.0)
             .build();
@@ -145,7 +145,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_partiallyFilledOrder() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 0.5)
             .build();
 
@@ -165,7 +165,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_multiplePositions_netPosition() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", BID, TradeState.FILLED, 100.0, 0.5, 0.5)
             .add(3000L, "order3", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
@@ -190,7 +190,7 @@ class HasOpenPositionRuleTest {
     @Test
     void predicate_minimumAmountThreshold() {
         double epsilon = MINIMUM_AMOUNT_ALLOWED / 2.0;
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 100.0, 1.0, 1.0 - epsilon)
             .build();
@@ -212,7 +212,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_remainingAtThreshold() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 100.0, MINIMUM_AMOUNT_ALLOWED, MINIMUM_AMOUNT_ALLOWED)
             .build();
@@ -232,7 +232,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_noTrades() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id").build();
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id").build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
         rule.watch(new DirectFlux<>());
@@ -249,11 +249,11 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_multipleSeries() {
-        MyOrdersTimeSeries series1 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series1 = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 0.5)
             .build();
 
-        MyOrdersTimeSeries series2 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series2 = new OrderTimeSeriesBuilder().setId("id")
             .add(1500L, "order2", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2500L, "order3", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .build();
@@ -316,7 +316,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_largePosition() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 100.0, 50.0)
             .build();
 
@@ -335,7 +335,7 @@ class HasOpenPositionRuleTest {
      */
     @Test
     void predicate_allTradesExecuted() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", BID, TradeState.FILLED, 100.0, 0.5, 0.5)
             .add(3000L, "order3", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)

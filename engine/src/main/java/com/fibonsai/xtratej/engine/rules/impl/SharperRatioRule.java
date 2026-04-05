@@ -16,7 +16,7 @@ package com.fibonsai.xtratej.engine.rules.impl;
 
 import com.fibonsai.xtratej.engine.rules.RuleStream;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.hipparchus.stat.descriptive.DescriptiveStatistics;
@@ -24,9 +24,9 @@ import tools.jackson.databind.JsonNode;
 
 import java.util.function.Function;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.ASK;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.MINIMUM_AMOUNT_ALLOWED;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.ASK;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.MINIMUM_AMOUNT_ALLOWED;
 
 /***
  * this rule only supports MyOrderTimeSeries
@@ -63,11 +63,11 @@ public class SharperRatioRule extends RuleStream<BooleanTimeSeries> {
             BooleanTimeSeries[] results = new BooleanTimeSeries[timeSeriesArray.length];
             for (var ts: timeSeriesArray) {
                 if (ts.timestamp() > lastTimestamp) lastTimestamp = ts.timestamp();
-                if (ts instanceof MyOrdersTimeSeries myorders) {
+                if (ts instanceof OrderTimeSeries myorders) {
                     double result = Double.NaN;
                     double amountAccumulated = Double.NaN;
                     for (int x = 0; x < myorders.size(); x++) {
-                        MyOrdersTimeSeries.BidAskSide side = myorders.sides()[x];
+                        OrderTimeSeries.BidAskSide side = myorders.sides()[x];
                         double amount = myorders.executedAmounts()[x];
                         double price = myorders.prices()[x];
                         if (Double.isNaN(result) && side == ASK) continue;

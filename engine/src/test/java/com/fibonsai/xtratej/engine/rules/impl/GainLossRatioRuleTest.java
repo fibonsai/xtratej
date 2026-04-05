@@ -18,20 +18,20 @@ import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.engine.rules.RuleType;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.OrderCondition;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.OrderType;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.OrderCondition;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.OrderType;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
-import com.fibonsai.xtratej.event.series.dao.builders.MyOrdersTimeSeriesBuilder;
+import com.fibonsai.xtratej.event.series.dao.builders.OrderTimeSeriesBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.ASK;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.ASK;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GainLossRatioRuleTest {
@@ -50,7 +50,7 @@ class GainLossRatioRuleTest {
     @Test
     void predicate_singleGain_ratioInfinity() {
         // Profit = 120 - 100 = 20 > 0 -> gain
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .build();
@@ -71,7 +71,7 @@ class GainLossRatioRuleTest {
     @Test
     void predicate_singleLoss_ratioZero() {
         // Profit = 80 - 100 = -20 < 0 -> loss
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(2000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(1000L, "order2", ASK, TradeState.FILLED, 80.0, 1.0, 1.0)
             .build();
@@ -94,7 +94,7 @@ class GainLossRatioRuleTest {
         // 2 separate positions:
         // Position 1: ASK 80, BID 100 = -20 (loss)
         // Position 2: ASK 120, BID 100 = +20 (gain)
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 80.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -120,7 +120,7 @@ class GainLossRatioRuleTest {
         // Position 1: ASK 115, BID 100 = +15
         // Position 2: ASK 130, BID 100 = +30
         // Position 3: ASK 120, BID 100 = +20
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 115.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -150,7 +150,7 @@ class GainLossRatioRuleTest {
         // Position 1: ASK 95, BID 100 = -5
         // Position 2: ASK 85, BID 100 = -15
         // Position 3: ASK 90, BID 100 = -10
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 95.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -176,7 +176,7 @@ class GainLossRatioRuleTest {
      */
     @Test
     void predicate_ratioWithinBounds() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 70.0, 1.0, 1.0) // -30
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -205,7 +205,7 @@ class GainLossRatioRuleTest {
      */
     @Test
     void predicate_ratioBelowMin() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 85.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -233,7 +233,7 @@ class GainLossRatioRuleTest {
     @Test
     void predicate_breakEven_position() {
         // ASK 100, BID 100 = 0 profit (not counted as gain or loss)
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 100.0, 1.0, 1.0)
             .build();
@@ -294,7 +294,7 @@ class GainLossRatioRuleTest {
      */
     @Test
     void predicate_partiallyFilledOrders() {
-        MyOrdersTimeSeriesBuilder builder = new MyOrdersTimeSeriesBuilder().setId("test");
+        OrderTimeSeriesBuilder builder = new OrderTimeSeriesBuilder().setId("test");
 
         // Buy 0.5 at 100, Sell 0.5 at 110
         // Profit = 0.5 * 110 - 0.5 * 100 = 5 > 0 -> gain
@@ -333,7 +333,7 @@ class GainLossRatioRuleTest {
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
         rule.watch(new DirectFlux<>());
 
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .build();
@@ -350,12 +350,12 @@ class GainLossRatioRuleTest {
      */
     @Test
     void predicate_multipleSeries() {
-        MyOrdersTimeSeries series1 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series1 = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .build();
 
-        MyOrdersTimeSeries series2 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series2 = new OrderTimeSeriesBuilder().setId("id")
             .add(1500L, "order3", BID, TradeState.FILLED, 50.0, 1.0, 1.0)
             .add(2500L, "order4", ASK, TradeState.FILLED, 45.0, 1.0, 1.0)
             .build();

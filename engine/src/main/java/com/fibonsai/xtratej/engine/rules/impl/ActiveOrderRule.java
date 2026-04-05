@@ -16,8 +16,8 @@ package com.fibonsai.xtratej.engine.rules.impl;
 
 import com.fibonsai.xtratej.engine.rules.RuleStream;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import tools.jackson.databind.JsonNode;
@@ -65,7 +65,7 @@ public class ActiveOrderRule extends RuleStream<BooleanTimeSeries> {
             int count = 0;
             for (var ts: timeSeriesArray) {
                 if (ts.timestamp() > lastTimestamp) lastTimestamp = ts.timestamp();
-                if (ts instanceof MyOrdersTimeSeries myOrders) {
+                if (ts instanceof OrderTimeSeries myOrders) {
                     long activeOrders = 0;
                     for (var state: myOrders.tradeStates()) {
                         if (ACTIVE_STATES.contains(state)) activeOrders++;

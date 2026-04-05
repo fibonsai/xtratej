@@ -18,18 +18,18 @@ import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.engine.rules.RuleType;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.TradeState;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
-import com.fibonsai.xtratej.event.series.dao.builders.MyOrdersTimeSeriesBuilder;
+import com.fibonsai.xtratej.event.series.dao.builders.OrderTimeSeriesBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.ASK;
-import static com.fibonsai.xtratej.event.series.dao.MyOrdersTimeSeries.BidAskSide.BID;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.ASK;
+import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide.BID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,7 +60,7 @@ class SharperRatioRuleTest {
     @Test
     void predicate_singleGain_ratioInfinity() {
         // Profit = 120 - 100 = 20 > 0
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .build();
@@ -82,7 +82,7 @@ class SharperRatioRuleTest {
     @Test
     void predicate_singleLoss_ratioInfinity() {
         // Profit = 80 - 100 = -20 < 0
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 80.0, 1.0, 1.0)
             .build();
@@ -105,7 +105,7 @@ class SharperRatioRuleTest {
         // Position 1: ASK 120, BID 100 = +20
         // Position 2: ASK 120, BID 100 = +20
         // Mean = 20, StdDev = 0 -> Sharpe = infinity
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -134,7 +134,7 @@ class SharperRatioRuleTest {
         // Position 2: ASK 80, BID 100 = -20
         // Mean = 0, StdDev = sqrt(800) ≈ 28.28
         // Sharpe = 0 / 28.28 = 0
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -167,7 +167,7 @@ class SharperRatioRuleTest {
         // Position 3: ASK 130, BID 100 = +30
         // Mean = 20, StdDev ≈ 8.16
         // Sharpe ≈ 2.45
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -201,7 +201,7 @@ class SharperRatioRuleTest {
         // Position 3: ASK 70, BID 100 = -30
         // Mean = -20, StdDev ≈ 8.16
         // Sharpe ≈ -2.45
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 90.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -230,7 +230,7 @@ class SharperRatioRuleTest {
     @Test
     void predicate_breakEven_trades() {
         // All break-even: ASK 100, BID 100 = 0
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -257,7 +257,7 @@ class SharperRatioRuleTest {
     void predicate_withRiskFreeRate() {
         // Position 1: ASK 120, BID 100 = +20
         // Position 2: ASK 120, BID 100 = +20
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -284,7 +284,7 @@ class SharperRatioRuleTest {
      */
     @Test
     void predicate_onlyLosses_negativeSharpe() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 95.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -313,7 +313,7 @@ class SharperRatioRuleTest {
      */
     @Test
     void predicate_ratioWithinBounds() {
-        MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .add(3000L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -344,12 +344,12 @@ class SharperRatioRuleTest {
      */
     @Test
     void predicate_multipleSeries() {
-        MyOrdersTimeSeries series1 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series1 = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .build();
 
-        MyOrdersTimeSeries series2 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series2 = new OrderTimeSeriesBuilder().setId("id")
             .add(1500L, "order3", BID, TradeState.FILLED, 50.0, 1.0, 1.0)
             .add(2500L, "order4", ASK, TradeState.FILLED, 45.0, 1.0, 1.0)
             .build();
@@ -415,12 +415,12 @@ class SharperRatioRuleTest {
      */
     @Test
     void predicate_multipleSeriesDifferentResults() {
-        MyOrdersTimeSeries series1 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series1 = new OrderTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2000L, "order2", ASK, TradeState.FILLED, 110.0, 1.0, 1.0)
             .build();
 
-        MyOrdersTimeSeries series2 = new MyOrdersTimeSeriesBuilder().setId("id")
+        OrderTimeSeries series2 = new OrderTimeSeriesBuilder().setId("id")
             .add(1500L, "order3", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
             .add(2500L, "order4", ASK, TradeState.FILLED, 120.0, 1.0, 1.0)
             .add(3500L, "order5", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
