@@ -22,8 +22,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import static com.fibonsai.xtratej.adapter.core.decoders.FtDataCandlestickDecoder.FIELD.*;
 
@@ -65,13 +63,12 @@ public class FtDataCandlestickDecoder implements Decoder {
     public BarTimeSeries decode(ResultSet rs) {
         var builder = new BarTimeSeriesBuilder().setId(tsId);
         try {
-            LocalDateTime date = rs.getTimestamp(INSTANT.str()).toLocalDateTime();
+            long timestamp = rs.getLong(INSTANT.str()) / 1_000;
             double open = rs.getDouble(OPEN.str());
             double high = rs.getDouble(HIGH.str());
             double low = rs.getDouble(LOW.str());
             double close = rs.getDouble(CLOSE.str());
             double volume = rs.getDouble(VOLUME.str());
-            long timestamp = date.toEpochSecond(ZoneOffset.UTC) * 1_000;
             builder.add(timestamp, open, high, low, close, volume);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

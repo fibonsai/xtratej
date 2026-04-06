@@ -234,7 +234,7 @@ public class DuckDBSubscriberTest {
         assertTrue(latch.await(2, TimeUnit.SECONDS));
         assertTrue(connected, "Should connect successfully");
         assertTrue(received.get(), "Should receive message within timeout");
-        assertEquals(1775250000000L, timestamp.get(), "timestamp not match");
+        assertEquals(1775260800000L, timestamp.get(), "timestamp not match");
         assertEquals(66964.29, open.get(), "open not match");
         assertEquals(66964.3, high.get(), "high not match");
         assertEquals(66900.79, low.get(), "low not match");
