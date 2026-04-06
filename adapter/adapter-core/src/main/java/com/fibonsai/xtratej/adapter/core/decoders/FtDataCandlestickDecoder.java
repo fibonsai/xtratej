@@ -71,7 +71,7 @@ public class FtDataCandlestickDecoder implements Decoder {
             double low = rs.getDouble(LOW.str());
             double close = rs.getDouble(CLOSE.str());
             double volume = rs.getDouble(VOLUME.str());
-            long timestamp = date.toEpochSecond(ZoneOffset.UTC);
+            long timestamp = date.toEpochSecond(ZoneOffset.UTC) * 1_000;
             builder.add(timestamp, open, high, low, close, volume);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -35,7 +35,7 @@ public class FtDataTradeDecoder implements Decoder {
         ID("id"),
         SIDE("side"),
         PRICE("price"),
-        VOLUME("volume"),
+        AMOUNT("amount"),
         ;
 
         private final String fieldStr;
@@ -72,7 +72,7 @@ public class FtDataTradeDecoder implements Decoder {
                 default -> throw new RuntimeException("Side unknown");
             };
             double price = rs.getDouble(PRICE.str());
-            double amount = rs.getDouble(VOLUME.str());
+            double amount = rs.getDouble(AMOUNT.str());
             long timestamp = rs.getLong(TIMESTAMP.str());
             builder.add(timestamp, id, side, FILLED, price, amount, amount);
         } catch (SQLException e) {
@@ -92,7 +92,7 @@ public class FtDataTradeDecoder implements Decoder {
             default -> throw new RuntimeException("Side unknown: " + sideStr);
         };
         double price = jsonNode.get(PRICE.str()).asDouble();
-        double amount = jsonNode.get(VOLUME.str()).asDouble();
+        double amount = jsonNode.get(AMOUNT.str()).asDouble();
         long timestamp = jsonNode.get(TIMESTAMP.str()).asLong();
         builder.add(timestamp, id, side, FILLED, price, amount, amount);
         return builder.build();

@@ -15,6 +15,7 @@
 package com.fibonsai.xtratej.adapter.duckdb;
 
 import com.fibonsai.xtratej.adapter.core.decoders.DecoderFactory;
+import com.fibonsai.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.com.google.common.util.concurrent.AtomicDouble;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -46,16 +48,22 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 public class DuckDBSubscriberTest {
 
     private static final Logger log = LoggerFactory.getLogger(DuckDBSubscriberTest.class);
 
-    private static final String S3URL = "s3://my-bucket/trades.parquet";
+    private static final String TRADE_S3URL = "s3://my-bucket/trades.parquet";
+    private static final String CANDLE_S3URL = "s3://my-bucket/ohlcv.parquet";
+
+    private static final JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
+
+    private final ObjectNode newParams = jsonNodeFactory.objectNode();
 
     private DuckDBSubscriber subscriber;
 
@@ -64,16 +72,16 @@ public class DuckDBSubscriberTest {
 
     @BeforeAll
     public static void init() {
-        String uploaded = uploadFileToMinIO();
-        assertFalse(uploaded.isBlank());
-        log.info(uploaded);
+        String uploadedTrades = uploadFileToMinIO("trades.parquet");
+        String uploadedOhlcv = uploadFileToMinIO("ohlcv.parquet");
+        assertFalse(uploadedTrades.isBlank());
+        assertFalse(uploadedOhlcv.isBlank());
+        log.info(uploadedTrades);
+        log.info(uploadedOhlcv);
     }
 
     @BeforeEach
     public void beforeEach() {
-        String query = "SELECT * FROM read_parquet('%s')".formatted(S3URL);
-
-        JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
         ObjectNode otherProperties = jsonNodeFactory.objectNode();
         otherProperties.put("s3_use_ssl", false);
         URI endpointUri = URI.create(container.getS3URL());
@@ -81,15 +89,11 @@ public class DuckDBSubscriberTest {
         otherProperties.put("s3_url_style", "path");
         otherProperties.put("s3_region", "us-east-1");
 
-        ObjectNode newParams = jsonNodeFactory.objectNode();
         newParams.put(DuckDBClient.DuckDBKey.ACCOUNT.key(), container.getUserName());
         newParams.put(DuckDBClient.DuckDBKey.SECRET.key(), container.getPassword());
-        newParams.put(DuckDBClient.DuckDBKey.QUERY.key(), query);
-        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DecoderFactory.FT_DATA_TRADE.name());
         newParams.set(DuckDBClient.DuckDBKey.OTHER_PROPERTIES.key(), otherProperties);
 
         subscriber = new DuckDBSubscriber("test", "test");
-        subscriber.setParams(newParams);
     }
 
     @AfterEach
@@ -110,9 +114,9 @@ public class DuckDBSubscriberTest {
         }
     }
 
-    private static String uploadFileToMinIO() {
+    private static String uploadFileToMinIO(String parquetFileName) {
         try {
-            var resource = DuckDBSubscriberTest.class.getClassLoader().getResource("trades.parquet");
+            var resource = DuckDBSubscriberTest.class.getClassLoader().getResource(parquetFileName);
             String parquetFilePath = Paths.get(Objects.requireNonNull(resource).toURI()).toAbsolutePath().toString();
             String bucketName = "my-bucket";
             AwsCredentials credentials = AwsBasicCredentials.create(container.getUserName(), container.getPassword());
@@ -152,6 +156,10 @@ public class DuckDBSubscriberTest {
 
     @Test
     void testConnectAndSubscribe() throws Exception {
+        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DecoderFactory.FT_DATA_TRADE.name());
+        String query = "SELECT * FROM read_parquet('%s') LIMIT 1".formatted(TRADE_S3URL);
+        newParams.put(DuckDBClient.DuckDBKey.QUERY.key(), query);
+        subscriber.setParams(newParams);
         CountDownLatch latch = new CountDownLatch(2);
         subscriber.onConnect(latch::countDown);
         subscriber.onSubscribe(latch::countDown);
@@ -162,21 +170,81 @@ public class DuckDBSubscriberTest {
     }
 
     @Test
-    void testReceiveMessageFromS3() throws Exception {
+    void testReceiveTradeFromS3() throws Exception {
+        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DecoderFactory.FT_DATA_TRADE.name());
+        String query = "SELECT * FROM read_parquet('%s') LIMIT 1".formatted(TRADE_S3URL);
+        newParams.put(DuckDBClient.DuckDBKey.QUERY.key(), query);
+        subscriber.setParams(newParams);
         CountDownLatch latch = new CountDownLatch(1);
         AtomicBoolean received = new AtomicBoolean(false);
+        AtomicLong timestamp = new AtomicLong(0L);
+        AtomicReference<String> id = new AtomicReference<>("");
+        AtomicReference<OrderTimeSeries.BidAskSide> side = new AtomicReference<>(OrderTimeSeries.BidAskSide.UNDEF);
+        AtomicDouble price = new AtomicDouble(0.0);
+        AtomicDouble executedAmount = new AtomicDouble(0.0);
         subscriber.subscribe(ts -> {
             received.compareAndSet(false, ts instanceof OrderTimeSeries);
+            if (ts instanceof OrderTimeSeries orderTimeSeries && orderTimeSeries.size() == 1) {
+                timestamp.set(orderTimeSeries.timestamps()[0]);
+                side.set(orderTimeSeries.sides()[0]);
+                id.set(orderTimeSeries.orderIds()[0]);
+                price.set(orderTimeSeries.prices()[0]);
+                executedAmount.set(orderTimeSeries.executedAmounts()[0]);
+            }
             latch.countDown();
         });
         boolean connected = subscriber.connect();
         assertTrue(latch.await(2, TimeUnit.SECONDS));
         assertTrue(connected, "Should connect successfully");
         assertTrue(received.get(), "Should receive message within timeout");
+        assertEquals(1775260800070L, timestamp.get(), "timestamp not match");
+        assertEquals("3924721793", id.get(), "order ID not match");
+        assertEquals(OrderTimeSeries.BidAskSide.ASK, side.get(), "side not match");
+        assertEquals(66964.29, price.get(), "price not match");
+        assertEquals(0.00009, executedAmount.get(), "amount not match");
+    }
+
+    @Test
+    void testReceiveCandleFromS3() throws Exception {
+        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DecoderFactory.FT_DATA_CANDLESTICK.name());
+        String query = "SELECT * FROM read_parquet('%s') LIMIT 1".formatted(CANDLE_S3URL);
+        newParams.put(DuckDBClient.DuckDBKey.QUERY.key(), query);
+        subscriber.setParams(newParams);
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean received = new AtomicBoolean(false);
+        AtomicLong timestamp = new AtomicLong(0L);
+        AtomicDouble open = new AtomicDouble(0.0);
+        AtomicDouble high = new AtomicDouble(0.0);
+        AtomicDouble low = new AtomicDouble(0.0);
+        AtomicDouble close = new AtomicDouble(0.0);
+        AtomicDouble volume = new AtomicDouble(0.0);
+        subscriber.subscribe(ts -> {
+            received.compareAndSet(false, ts instanceof BarTimeSeries);
+            if (ts instanceof BarTimeSeries barTimeSeries && barTimeSeries.size() == 1) {
+                timestamp.set(barTimeSeries.timestamps()[0]);
+                open.set(barTimeSeries.opens()[0]);
+                high.set(barTimeSeries.highs()[0]);
+                low.set(barTimeSeries.lows()[0]);
+                close.set(barTimeSeries.closes()[0]);
+                volume.set(barTimeSeries.volumes()[0]);
+            }
+            latch.countDown();
+        });
+        boolean connected = subscriber.connect();
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertTrue(connected, "Should connect successfully");
+        assertTrue(received.get(), "Should receive message within timeout");
+        assertEquals(1775250000000L, timestamp.get(), "timestamp not match");
+        assertEquals(66964.29, open.get(), "open not match");
+        assertEquals(66964.3, high.get(), "high not match");
+        assertEquals(66900.79, low.get(), "low not match");
+        assertEquals(66900.8, close.get(), "close not match");
+        assertEquals(14.16535, volume.get(), "volume not match");
     }
 
     @Test
     void testDisconnect() throws Exception {
+        subscriber.setParams(newParams);
         CountDownLatch latch = new CountDownLatch(1);
         subscriber.onConnect(latch::countDown);
         boolean connected = subscriber.connect();
