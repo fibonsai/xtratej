@@ -22,8 +22,8 @@
     <modules>
         <module>directflux</module>
         <module>event</module>
-        <module>engine</module>
         <module>adapter</module>
+        <module>engine</module>
         <module>benchmarks</module>
     </modules>
 
@@ -80,22 +80,27 @@
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter-core</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter-nats</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter-simulated</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fibonsai.xtratej</groupId>
+                <artifactId>adapter-duckdb</artifactId>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
