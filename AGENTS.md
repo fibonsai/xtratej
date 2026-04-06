@@ -22,6 +22,8 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject. 
 *   **Adapter Simulated Tests**: `adapter/adapter-simulated/src/test/java/com/fibonsai/xtratej/adapter/simulated`
 *   **Adapter Nats**: `adapter/adapter-simulated/src/main/java/com/fibonsai/xtratej/adapter/simulated`
 *   **Adapter Nats Tests**: `adapter/adapter-simulated/src/test/java/com/fibonsai/xtratej/adapter/simulated`
+*   **Adapter DuckDB**: `adapter/adapter-duckdb/src/main/java/com/fibonsai/xtratej/adapter/duckdb`
+*   **Adapter DuckDB Tests**: `adapter/adapter-duckdb/src/test/java/com/fibonsai/xtratej/adapter/duckdb`
 
 ### `directflux` structure
 
@@ -70,7 +72,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject. 
 ## Exploring the code
 
 * "Read `directflux/src/main/java/com/fibonsai/directflux/Directflux.java` to understand how work the DirectFlux implementation.
-* "Read `adapter/adapter-simulated/src/main/java/com/fibonsai/xtratej/adapter/simulated/*.java` to understand how to create Adapters implementation.
+* "Read `adapter/adapter-simulated/src/main/java/com/fibonsai/xtratej/adapter/simulated/*.java` to understand how to create Adapter implementation.
 * "Read `event/src/main/java/com/fibonsai/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'. Use builders located at "com.fibonsai.xtratej.event.series.dao.builders" package.
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using DirectFlux.
@@ -81,7 +83,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject. 
 
 ## Testing
 
-*   **Framework**: JUnit 5 + Mockito.
+*   **Framework**: JUnit 5 + Mockito + TestContainer (if necessary).
 *   **Requirement**: Every new feature or bug fix must include a corresponding test case.
 *   **Location**: Mirror the package structure in `[event|engine]/src/test/java`.
 
