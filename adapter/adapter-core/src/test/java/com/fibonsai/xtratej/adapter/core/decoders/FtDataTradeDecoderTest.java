@@ -47,7 +47,7 @@ class FtDataTradeDecoderTest {
         when(rs.getString("id")).thenReturn("trade-123");
         when(rs.getString("side")).thenReturn("BUY");
         when(rs.getDouble("price")).thenReturn(150.50);
-        when(rs.getDouble("volume")).thenReturn(10.0);
+        when(rs.getDouble("amount")).thenReturn(10.0);
         when(rs.getLong("timestamp")).thenReturn(1000000L);
 
         TimeSeries result = decoder.setId("test-id").decode(rs);
@@ -70,7 +70,7 @@ class FtDataTradeDecoderTest {
         when(rs.getString("id")).thenReturn("trade-456");
         when(rs.getString("side")).thenReturn("SELL");
         when(rs.getDouble("price")).thenReturn(151.00);
-        when(rs.getDouble("volume")).thenReturn(5.5);
+        when(rs.getDouble("amount")).thenReturn(5.5);
         when(rs.getLong("timestamp")).thenReturn(2000000L);
 
         OrderTimeSeries orderSeries = decoder.decode(rs);
@@ -98,7 +98,7 @@ class FtDataTradeDecoderTest {
                 "id": "trade-json-1",
                 "side": "buy",
                 "price": 200.75,
-                "volume": 3.25,
+                "amount": 3.25,
                 "timestamp": 3000000
             }
             """;
@@ -124,7 +124,7 @@ class FtDataTradeDecoderTest {
                 "id": "trade-string-1",
                 "side": "SELL",
                 "price": 300.00,
-                "volume": 7.5,
+                "amount": 7.5,
                 "timestamp": 4000000
             }
             """;
