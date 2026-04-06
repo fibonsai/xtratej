@@ -16,10 +16,10 @@ package com.fibonsai.xtratej.adapter.duckdb;
 
 import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.adapter.core.Adapter;
+import com.fibonsai.xtratej.adapter.core.Decoder;
+import com.fibonsai.xtratej.adapter.core.DecoderFactory;
 import com.fibonsai.xtratej.adapter.core.WithParams;
-import com.fibonsai.xtratej.event.series.dao.EmptyTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
-import com.fibonsai.xtratej.event.series.dao.builders.Double2TimeSeriesBuilder;
 import org.duckdb.DuckDBDriver;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -34,6 +34,12 @@ import java.util.concurrent.TimeUnit;
 
 public class DuckDBClient implements Adapter, WithParams {
 
+    public enum SOURCE_DATA {
+        TRADE,
+        CANDLE,
+        UNDEF
+    }
+
     private static final Logger log = LoggerFactory.getLogger(DuckDBClient.class);
 
     private final @Nullable Connection conn;
@@ -44,6 +50,8 @@ public class DuckDBClient implements Adapter, WithParams {
     private String account = "";
     private String secret = "";
     private String query = "SELECT 1";
+    private SOURCE_DATA sourceData = SOURCE_DATA.UNDEF;
+
     private @Nullable Thread thread = null;
     private boolean subscribed = false;
     private boolean connected = false;
@@ -56,7 +64,8 @@ public class DuckDBClient implements Adapter, WithParams {
         SECRET("secret"),
         DELAY_ELEMENTS_NANO("delay-elements-nanos"),
         OTHER_PROPERTIES("other_properties"),
-        QUERY("query")
+        QUERY("query"),
+        SOURCE_DATA("source-data"),
         ;
 
         private final String key;
@@ -121,6 +130,9 @@ public class DuckDBClient implements Adapter, WithParams {
             }
             if (DuckDBKey.QUERY.key().equals(key) && value.isString()) {
                 query = value.asString();
+            }
+            if (DuckDBKey.SOURCE_DATA.key().equals(key) && value.isString()) {
+                sourceData = SOURCE_DATA.valueOf(value.asString().toUpperCase());
             }
         }
         account = accountTemp == null ? System.getenv("DUCKDB_ACCOUNT") : accountTemp;
@@ -228,23 +240,12 @@ public class DuckDBClient implements Adapter, WithParams {
     }
 
     private TimeSeries decode(ResultSet rs) {
-        TimeSeries timeSeries = EmptyTimeSeries.INSTANCE;
-        try {
-            // HINT: ResultSetMetaData metaData = rs.getMetaData();
-
-            String id = rs.getString("id");
-            String side = rs.getString("side");
-            double price = rs.getDouble("price");
-            double amount = rs.getDouble("volume");
-            long timestamp = rs.getLong("timestamp");
-
-            Double2TimeSeriesBuilder builder = new Double2TimeSeriesBuilder().setId(query);
-            builder.add(timestamp, price, amount);
-            timeSeries = builder.build();
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
-        return timeSeries;
+        Decoder decoder = switch (sourceData) {
+            case TRADE -> DecoderFactory.FT_DATA_TRADE.get().setId(query);
+            case CANDLE -> DecoderFactory.FT_DATA_CANDLESTICK.get().setId(query);
+            default -> throw new RuntimeException("Source Data undefined");
+        };
+        return decoder.decode(rs);
     }
 
     @Override
