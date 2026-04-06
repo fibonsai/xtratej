@@ -81,6 +81,15 @@ jobs:
       continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Test Deploy Adapter DuckDB subproject (dry run)
+      run: mvn -pl adapter/adapter-duckdb clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Deploy Adapter DuckDB subproject
+      run: mvn -pl adapter/adapter-duckdb deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Test Deploy Engine subproject (dry run)
       run: mvn -pl engine clean deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
       env:
