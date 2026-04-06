@@ -46,6 +46,10 @@
             <artifactId>adapter-simulated</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fibonsai.xtratej</groupId>
+            <artifactId>adapter-duckdb</artifactId>
+        </dependency>
+        <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
