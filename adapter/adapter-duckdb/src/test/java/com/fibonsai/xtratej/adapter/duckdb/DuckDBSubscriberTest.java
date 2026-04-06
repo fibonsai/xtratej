@@ -14,7 +14,7 @@
 
 package com.fibonsai.xtratej.adapter.duckdb;
 
-import com.fibonsai.xtratej.event.series.dao.Double2TimeSeries;
+import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ public class DuckDBSubscriberTest {
 
     private static final Logger log = LoggerFactory.getLogger(DuckDBSubscriberTest.class);
 
-    private static final String S3URL = "s3://my-bucket/instrument.parquet";
+    private static final String S3URL = "s3://my-bucket/trades.parquet";
 
     private DuckDBSubscriber subscriber;
 
@@ -84,6 +84,7 @@ public class DuckDBSubscriberTest {
         newParams.put(DuckDBClient.DuckDBKey.ACCOUNT.key(), container.getUserName());
         newParams.put(DuckDBClient.DuckDBKey.SECRET.key(), container.getPassword());
         newParams.put(DuckDBClient.DuckDBKey.QUERY.key(), query);
+        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DuckDBClient.SOURCE_DATA.TRADE.name());
         newParams.set(DuckDBClient.DuckDBKey.OTHER_PROPERTIES.key(), otherProperties);
 
         subscriber = new DuckDBSubscriber("test", "test");
@@ -110,7 +111,7 @@ public class DuckDBSubscriberTest {
 
     private static String uploadFileToMinIO() {
         try {
-            var resource = DuckDBSubscriberTest.class.getClassLoader().getResource("instrument.parquet");
+            var resource = DuckDBSubscriberTest.class.getClassLoader().getResource("trades.parquet");
             String parquetFilePath = Paths.get(Objects.requireNonNull(resource).toURI()).toAbsolutePath().toString();
             String bucketName = "my-bucket";
             AwsCredentials credentials = AwsBasicCredentials.create(container.getUserName(), container.getPassword());
@@ -164,7 +165,7 @@ public class DuckDBSubscriberTest {
         CountDownLatch latch = new CountDownLatch(1);
         AtomicBoolean received = new AtomicBoolean(false);
         subscriber.subscribe(ts -> {
-            received.compareAndSet(false, ts instanceof Double2TimeSeries);
+            received.compareAndSet(false, ts instanceof OrderTimeSeries);
             latch.countDown();
         });
         boolean connected = subscriber.connect();
