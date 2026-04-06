@@ -211,7 +211,7 @@ public class DuckDBClient implements Adapter, WithParams {
                         }
                     }
                 }
-
+                stmt.addBatch("SET TimeZone = 'UTC'");
                 stmt.executeBatch();
                 ResultSet resultSet = stmt.executeQuery(query);
                 try {
