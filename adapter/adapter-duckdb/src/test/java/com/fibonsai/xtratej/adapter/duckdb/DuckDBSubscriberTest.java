@@ -14,6 +14,7 @@
 
 package com.fibonsai.xtratej.adapter.duckdb;
 
+import com.fibonsai.xtratej.adapter.core.decoders.DecoderFactory;
 import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -84,7 +85,7 @@ public class DuckDBSubscriberTest {
         newParams.put(DuckDBClient.DuckDBKey.ACCOUNT.key(), container.getUserName());
         newParams.put(DuckDBClient.DuckDBKey.SECRET.key(), container.getPassword());
         newParams.put(DuckDBClient.DuckDBKey.QUERY.key(), query);
-        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DuckDBClient.SOURCE_DATA.TRADE.name());
+        newParams.put(DuckDBClient.DuckDBKey.SOURCE_DATA.key(), DecoderFactory.FT_DATA_TRADE.name());
         newParams.set(DuckDBClient.DuckDBKey.OTHER_PROPERTIES.key(), otherProperties);
 
         subscriber = new DuckDBSubscriber("test", "test");

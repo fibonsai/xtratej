@@ -12,9 +12,8 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adapter.core.ftdata;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
-import com.fibonsai.xtratej.adapter.core.Decoder;
 import com.fibonsai.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BarTimeSeriesBuilder;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static com.fibonsai.xtratej.adapter.core.ftdata.FtDataCandlestickDecoder.FIELD.*;
+import static com.fibonsai.xtratej.adapter.core.decoders.FtDataCandlestickDecoder.FIELD.*;
 
 public class FtDataCandlestickDecoder implements Decoder {
 

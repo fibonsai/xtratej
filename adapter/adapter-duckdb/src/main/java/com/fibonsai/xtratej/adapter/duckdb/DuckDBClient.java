@@ -16,9 +16,9 @@ package com.fibonsai.xtratej.adapter.duckdb;
 
 import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.adapter.core.Adapter;
-import com.fibonsai.xtratej.adapter.core.Decoder;
-import com.fibonsai.xtratej.adapter.core.DecoderFactory;
 import com.fibonsai.xtratej.adapter.core.WithParams;
+import com.fibonsai.xtratej.adapter.core.decoders.Decoder;
+import com.fibonsai.xtratej.adapter.core.decoders.DecoderFactory;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import org.duckdb.DuckDBDriver;
 import org.jspecify.annotations.Nullable;
@@ -34,12 +34,6 @@ import java.util.concurrent.TimeUnit;
 
 public class DuckDBClient implements Adapter, WithParams {
 
-    public enum SOURCE_DATA {
-        TRADE,
-        CANDLE,
-        UNDEF
-    }
-
     private static final Logger log = LoggerFactory.getLogger(DuckDBClient.class);
 
     private final @Nullable Connection conn;
@@ -50,7 +44,7 @@ public class DuckDBClient implements Adapter, WithParams {
     private String account = "";
     private String secret = "";
     private String query = "SELECT 1";
-    private SOURCE_DATA sourceData = SOURCE_DATA.UNDEF;
+    private DecoderFactory sourceData = DecoderFactory.UNDEF;
 
     private @Nullable Thread thread = null;
     private boolean subscribed = false;
@@ -132,7 +126,7 @@ public class DuckDBClient implements Adapter, WithParams {
                 query = value.asString();
             }
             if (DuckDBKey.SOURCE_DATA.key().equals(key) && value.isString()) {
-                sourceData = SOURCE_DATA.valueOf(value.asString().toUpperCase());
+                sourceData = DecoderFactory.valueOf(value.asString().toUpperCase());
             }
         }
         account = accountTemp == null ? System.getenv("DUCKDB_ACCOUNT") : accountTemp;
@@ -240,11 +234,7 @@ public class DuckDBClient implements Adapter, WithParams {
     }
 
     private TimeSeries decode(ResultSet rs) {
-        Decoder decoder = switch (sourceData) {
-            case TRADE -> DecoderFactory.FT_DATA_TRADE.get().setId(query);
-            case CANDLE -> DecoderFactory.FT_DATA_CANDLESTICK.get().setId(query);
-            default -> throw new RuntimeException("Source Data undefined");
-        };
+        Decoder decoder = sourceData.get().setId(query);
         return decoder.decode(rs);
     }
 

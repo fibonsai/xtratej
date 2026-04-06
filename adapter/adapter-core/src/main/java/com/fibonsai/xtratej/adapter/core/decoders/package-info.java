@@ -13,6 +13,6 @@
  */
 
 @NullMarked
-package com.fibonsai.xtratej.adapter.core.ftdata;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
 import org.jspecify.annotations.NullMarked;

@@ -12,7 +12,7 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adapter.core;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import tools.jackson.databind.JsonNode;

@@ -12,10 +12,8 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adapter.core;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
-import com.fibonsai.xtratej.adapter.core.ftdata.FtDataCandlestickDecoder;
-import com.fibonsai.xtratej.adapter.core.ftdata.FtDataTradeDecoder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

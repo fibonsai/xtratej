@@ -12,9 +12,8 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adapter.core.ftdata;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
-import com.fibonsai.xtratej.adapter.core.Decoder;
 import com.fibonsai.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.BeforeEach;

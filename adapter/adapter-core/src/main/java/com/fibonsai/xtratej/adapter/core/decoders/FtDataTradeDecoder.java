@@ -12,9 +12,8 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adapter.core.ftdata;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
-import com.fibonsai.xtratej.adapter.core.Decoder;
 import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.BidAskSide;
 import com.fibonsai.xtratej.event.series.dao.builders.OrderTimeSeriesBuilder;
@@ -26,7 +25,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.fibonsai.xtratej.adapter.core.ftdata.FtDataTradeDecoder.FIELD.*;
+import static com.fibonsai.xtratej.adapter.core.decoders.FtDataTradeDecoder.FIELD.*;
 import static com.fibonsai.xtratej.event.series.dao.OrderTimeSeries.TradeState.FILLED;
 
 public class FtDataTradeDecoder implements Decoder {

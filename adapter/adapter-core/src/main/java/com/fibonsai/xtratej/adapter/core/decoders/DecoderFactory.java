@@ -12,25 +12,29 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.adapter.core;
+package com.fibonsai.xtratej.adapter.core.decoders;
 
-import com.fibonsai.xtratej.adapter.core.ftdata.FtDataCandlestickDecoder;
-import com.fibonsai.xtratej.adapter.core.ftdata.FtDataTradeDecoder;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 public enum DecoderFactory {
     FT_DATA_CANDLESTICK(FtDataCandlestickDecoder::new),
     FT_DATA_TRADE(FtDataTradeDecoder::new),
+    UNDEF(null),
     ;
 
-    private final Supplier<Decoder> supplier;
+    private final @Nullable Supplier<Decoder> supplier;
 
-    DecoderFactory(Supplier<Decoder> supplier) {
+    DecoderFactory(@Nullable Supplier<Decoder> supplier) {
         this.supplier = supplier;
     }
 
     public Decoder get() {
-        return supplier.get();
+        if (supplier != null) {
+            return supplier.get();
+        } else {
+            throw new IllegalStateException("UNDEF not implements Decoder");
+        }
     }
 }
