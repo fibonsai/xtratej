@@ -15,6 +15,7 @@
 package com.fibonsai.xtratej.engine.adapters;
 
 import com.fibonsai.xtratej.adapter.core.Publisher;
+import com.fibonsai.xtratej.adapter.nats.NatsPublisher;
 import com.fibonsai.xtratej.adapter.simulated.SimulatedPublisher;
 import org.jspecify.annotations.Nullable;
 
@@ -22,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public enum TargetType {
+    NATS(NatsPublisher.class),
     SIMULATED(SimulatedPublisher.class),
     UNDEF(null)
     ;
