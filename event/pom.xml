@@ -37,6 +37,10 @@
             <groupId>com.fibonsai</groupId>
             <artifactId>directflux</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hipparchus</groupId>
+            <artifactId>hipparchus-stat</artifactId>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

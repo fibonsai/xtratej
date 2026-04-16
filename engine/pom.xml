@@ -53,10 +53,6 @@
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.hipparchus</groupId>
-            <artifactId>hipparchus-stat</artifactId>
-        </dependency>
     </dependencies>
 
     <distributionManagement>
