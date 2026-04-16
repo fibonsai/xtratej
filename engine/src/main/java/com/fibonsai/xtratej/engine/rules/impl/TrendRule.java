@@ -20,7 +20,7 @@ import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.EmptyTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
-import org.hipparchus.stat.regression.SimpleRegression;
+import com.fibonsai.xtratej.event.series.dao.tools.Slope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -31,7 +31,6 @@ import java.util.function.Function;
 public class TrendRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(TrendRule.class);
-    private final SimpleRegression regression = new SimpleRegression();
 
     private String sourceId = "";
     private boolean isRising = true;
@@ -73,7 +72,7 @@ public class TrendRule extends RuleStream<BooleanTimeSeries> {
                 return new BooleanTimeSeries[]{ new BooleanTimeSeriesBuilder().add(lastTimestamp, false).build() };
             }
 
-            double slopeComparable = timeSeriesComparator instanceof DoubleTimeSeries ts ? getSlope(ts) : 0.0D;
+            double slopeComparable = timeSeriesComparator instanceof DoubleTimeSeries ts ? Slope.from(ts) : 0.0D;
 
             Boolean allresult = null;
             for (var timeSeries: timeSeriesArray) {
@@ -81,7 +80,7 @@ public class TrendRule extends RuleStream<BooleanTimeSeries> {
                     if (Objects.equals(timeSeriesComparator.id(), doubleTimeSeries.id())) {
                         continue;
                     }
-                    double slope = getSlope(doubleTimeSeries);
+                    double slope = Slope.from(doubleTimeSeries);
                     lastTimestamp = doubleTimeSeries.timestamp();
 
                     boolean result = isRising ? slope > slopeComparable : slope < slopeComparable;
@@ -101,17 +100,5 @@ public class TrendRule extends RuleStream<BooleanTimeSeries> {
     public TrendRule setRising(boolean rising) {
         isRising = rising;
         return this;
-    }
-
-    private double getSlope(DoubleTimeSeries series) {
-        regression.clear();
-        long[] timestamps = series.timestamps();
-        double[] values = series.values();
-        for (int x = 0; x < series.size(); x++) {
-            double doubleTimestamp = timestamps[x];
-            double value = values[x];
-            regression.addData(doubleTimestamp, value);
-        }
-        return regression.getSlope();
     }
 }

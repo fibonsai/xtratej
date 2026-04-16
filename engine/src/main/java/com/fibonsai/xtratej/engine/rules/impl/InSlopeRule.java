@@ -19,7 +19,7 @@ import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
-import org.hipparchus.stat.regression.SimpleRegression;
+import com.fibonsai.xtratej.event.series.dao.tools.Slope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -29,8 +29,6 @@ import java.util.function.Function;
 public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(InSlopeRule.class);
-
-    private final SimpleRegression regression = new SimpleRegression();
 
     private double minSlope = Double.NaN;
     private double maxSlope = Double.NaN;
@@ -56,7 +54,7 @@ public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
             long lastTimestamp = 0;
             for (var timeSeries: timeSeriesArray) {
                 if (timeSeries instanceof DoubleTimeSeries ts && timeSeries.size() > 0) {
-                    double slope = getSlope(ts);
+                    double slope = Slope.from(ts);
 
                     lastTimestamp = timeSeries.timestamp();
                     boolean result;
@@ -81,17 +79,5 @@ public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
     public InSlopeRule setMaxSlope(double maxSlope) {
         this.maxSlope = maxSlope;
         return this;
-    }
-
-    private double getSlope(DoubleTimeSeries series) {
-        regression.clear();
-        long[] timestamps = series.timestamps();
-        double[] values = series.values();
-        for (int x = 0; x < series.size(); x++) {
-            double doubleTimestamp = timestamps[x];
-            double value = values[x];
-            regression.addData(doubleTimestamp, value);
-        }
-        return regression.getSlope();
     }
 }
